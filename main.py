@@ -45,20 +45,20 @@ time.sleep(SLEEP_TIME)
 
 
 try:
-	while True:
-		events = inputs.get_gamepad()
-		for event in events:
-			if event.code in output_dict.keys():
-				output_dict[event.code] = event.state
-				end = time.time()
-		
-				if output_dict["BTN_EAST"] == 1:
-					pass
-				else:
-					driving.drive(output_dict)
-					
-				if output_dict["BTN_TL"] == 1 and output_dict["BTN_TR"] == 1 and random.random() < 0.025:
-					recording.record(output_dict)
+    while True:
+        events = inputs.get_gamepad()
+        for event in events:
+            if event.code in output_dict.keys():
+                output_dict[event.code] = event.state
+                end = time.time()
+
+                if output_dict["BTN_EAST"] == 1:
+                    pass
+                else:
+                    driving.drive(output_dict)
+
+                if output_dict["BTN_TL"] == 1 and output_dict["BTN_TR"] == 1 and random.random() < 0.025:
+                    recording.record(output_dict)
 
 except KeyboardInterrupt:
 	driving.disable()
