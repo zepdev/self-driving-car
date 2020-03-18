@@ -52,13 +52,8 @@ try:
             if event.code in output_dict.keys():
                 output_dict[event.code] = event.state
                 end = time.time()
-		
-		if event.code ["BTN_Mode"] == 1:
-			call ("sudo poweroff", shell = True)
-		
-		#if output_dict["BTN_Mode"] == 1:
-		#	call ("sudo poweroff", shell = True)
-
+		if event.code == "BTN_MODE":
+		    call("sudo poweroff", shell = True)
                 if output_dict["BTN_EAST"] == 1:
                     pass
                 else:
