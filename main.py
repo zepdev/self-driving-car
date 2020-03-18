@@ -5,6 +5,7 @@ import random
 import RPi.GPIO as GPIO
 from record import Record
 from drive import Drive
+from subprocess import call
 
 #initialize pins
 #######CHOOSE PINS WHICH ARE NOT USED BY MOTOR DRIVER HAT#########
@@ -51,7 +52,8 @@ try:
             if event.code in output_dict.keys():
                 output_dict[event.code] = event.state
                 end = time.time()
-
+		if event.code == "BTN_MODE":
+		    call("sudo poweroff", shell = True)
                 if output_dict["BTN_EAST"] == 1:
                     pass
                 else:
