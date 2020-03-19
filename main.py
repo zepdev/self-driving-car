@@ -49,11 +49,11 @@ try:
     while True:
         events = inputs.get_gamepad()
         for event in events:
+	    if event.code == "BTN_MODE":
+		call("sudo poweroff", shell = True)
             if event.code in output_dict.keys():
                 output_dict[event.code] = event.state
                 end = time.time()
-		if event.code == "BTN_MODE":
-		    call("sudo poweroff", shell = True)
                 if output_dict["BTN_EAST"] == 1:
                     pass
                 else:
