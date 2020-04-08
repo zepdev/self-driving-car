@@ -1,13 +1,13 @@
-import RPi.GPIO as GPIO
 import time
-import datetime
-import inputs
 import json
+import datetime
+import RPi.GPIO as GPIO
 from picamera import PiCamera
+
 
 class Record():
 	
-	def __init__(self, triggers, echos):
+	def __init__(self, triggers, echos, rec_path, cam_res=(224, 224)):
 		
 		self.nbr_dists = len(triggers)
 
@@ -15,7 +15,9 @@ class Record():
 		self.ECHOS = echos
 		
 		self.camera = PiCamera()
-		self.camera.resolution = (224, 224)
+		self.camera.resolution = cam_res
+
+		self.rec_path = rec_path
 		
 	@staticmethod
 	def _measure_distance(trigger, echo):
@@ -29,25 +31,22 @@ class Record():
 		pulse_duration = pulse_end_time - pulse_start_time
 		distance = round(pulse_duration * 17150, 2)
 		return distance
-	
-	
+
 	def record(self, output_dict):
 		ts = datetime.datetime.now()
 		
-		#picture
-		self.camera.capture("pictures/self_driving={0}/{1}.jpg".format(output_dict["BTN_EAST"], ts))
+		# picture
+		self.camera.capture("{0}/pictures/{1}.jpg".format(self.rec_path, ts))
 		
-		#outputs
+		# outputs
 		out = {"ABS_RX": round((output_dict["ABS_RX"]+0.5)/32767.5, 1), "ABS_Y": -round((output_dict["ABS_Y"]+0.5)/32767.5, 1)}
-		with open("output/{}.json".format(ts), "w") as f:
+		with open("{0}/outputs/{1}.json".format(self.rec_path, ts), "w") as f:
 			json.dump(out, f)
 			
-		#distances
+		# distances
 		dists = {}
-		for i in self.nbr_dists:
-			dists["distance_{}".format(i): self._measure_distance(self.TRIGGERS[i], self.ECHOS[i])]
+		for i in range(self.nbr_dists):
+			dists["dist_{}".format(i)] = self._measure_distance(self.TRIGGERS[i], self.ECHOS[i])
 
-		
-		dists = {"distance_1": distance_1, "distance_2": distance_2, "distance_3": distance_3}
-		with open("distance/{}.json".format(ts), "w") as f:
+		with open("{0}/distances/{1}.json".format(self.rec_path, ts), "w") as f:
 			json.dump(dists, f)

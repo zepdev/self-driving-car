@@ -1,0 +1,28 @@
+version: "3.7"
+
+services:
+    redis:
+        build: redis
+        networks:
+            - app-network
+        expose:
+            - "6379"
+
+    app:
+        build: app
+        environment:
+            - REDIS_HOST=redis
+            - REDIS_PORT=6379
+            - REDIS_ID=0
+            - INPUT_QUEUE=input_queue
+            - BATCH_SIZE=32
+            - PROCESS_SLEEP_MIN=1
+            - S3_BUCKET=zep-tda
+            - S3_DESTINATION=experiments/rc-car/data-collection
+        networks:
+            - app-network
+        ports:
+            - "0.0.0.0:5000:5000"
+
+networks:
+    app-network:
