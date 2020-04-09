@@ -18,11 +18,14 @@ services:
             - BATCH_SIZE=32
             - PROCESS_SLEEP_MIN=1
             - S3_BUCKET=zep-tda
-            - S3_DESTINATION=experiments/rc-car/data-collection
+            - S3_DESTINATION=experiments/rc-car/recordings/
+            - LOG_LEVEL=INFO
         networks:
             - app-network
-        ports:
-            - "0.0.0.0:5000:5000"
+        expose:
+            - "5000"
+#         ports:
+#             - "0.0.0.0:5000:5000"
 
 networks:
     app-network:

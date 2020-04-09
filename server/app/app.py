@@ -31,11 +31,12 @@ def receive_message():
 
     payload = request.json
 
-#    if not isinstance(payload["data"], list):
-#        abort(400)
+    if not isinstance(payload["data"], list):
+        abort(400)
 
     try:
-        redis_server.rpush(config.INPUT_QUEUE, json.dumps(payload))
+        for item in payload['data']:
+            redis_server.rpush(config.INPUT_QUEUE, json.dumps(item))
     except Exception as e:
         app.logger.exception(e)
 
