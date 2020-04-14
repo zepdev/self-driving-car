@@ -32,15 +32,24 @@ class Record():
 		distance = round(pulse_duration * 17150, 2)
 		return distance
 
+	@staticmethod
+	def _datetime_to_filename(time):
+		# time is generated with datetime.datetime.now()
+		iso = time.isoformat(sep="_")
+		iso = '-'.join(iso.split(':'))
+		iso = iso.replace('.', '-')
+		# Example: 2020-04-14_12-44-41-296481
+		return iso
+
 	def record(self, output_dict):
-		ts = datetime.datetime.now()
+		filename = self._datetime_to_filename(datetime.datetime.now())
 		
 		# picture
-		self.camera.capture("{0}/pictures/{1}.jpg".format(self.rec_path, ts))
+		self.camera.capture("{0}/pictures/{1}.jpg".format(self.rec_path, filename))
 		
 		# outputs
 		out = {"ABS_RX": round((output_dict["ABS_RX"]+0.5)/32767.5, 1), "ABS_Y": -round((output_dict["ABS_Y"]+0.5)/32767.5, 1)}
-		with open("{0}/outputs/{1}.json".format(self.rec_path, ts), "w") as f:
+		with open("{0}/outputs/{1}.json".format(self.rec_path, filename), "w") as f:
 			json.dump(out, f)
 			
 		# distances
@@ -48,5 +57,5 @@ class Record():
 		for i in range(self.nbr_dists):
 			dists["dist_{}".format(i)] = self._measure_distance(self.TRIGGERS[i], self.ECHOS[i])
 
-		with open("{0}/distances/{1}.json".format(self.rec_path, ts), "w") as f:
+		with open("{0}/distances/{1}.json".format(self.rec_path, filename), "w") as f:
 			json.dump(dists, f)
