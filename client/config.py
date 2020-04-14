@@ -1,4 +1,4 @@
-MSG_BROKER_BASE_URL = "http://localhost:5000"
+MSG_BROKER_BASE_URL = "http://localhost:80"
 USER = "RCcar-Rpi"
 PASSWORD = "lwjg#?kXTV&SCreh46"
 

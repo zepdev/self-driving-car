@@ -45,18 +45,16 @@ def post_data(data, msg_broker_base_url, auth_token=None):
     return response.status_code == 200
 
 
-def remove_files(base_path, directories):
-    for dirctr in directories:
-        path = "{0}/{1}".format(base_path, dirctr)
-        for root, dirs, files in os.walk(path):
-            for file in files:
-                os.remove(os.path.join(root, file))
+def remove_files(path, dir_ts):
+    for ts in dir_ts:
+        os.remove("{0}/pictures/{1}.jpg".format(path, ts))
+        os.remove("{0}/distances/{1}.json".format(path, ts))
+        os.remove("{0}/outputs/{1}.json".format(path, ts))
 
 
-def wrap_recordings(path):
+def wrap_recordings(path, dir_ts):
     recs = []
-    for filename in os.listdir("{0}/pictures".format(path)):
-        ts = filename.split('.')[0]
+    for ts in dir_ts:
         with open("{0}/outputs/{1}.json".format(path, ts), "r") as f:
             out = json.load(f)
         with open("{0}/distances/{1}.json".format(path, ts), "r") as f:
@@ -70,16 +68,22 @@ def wrap_recordings(path):
 
 while True:
     # Check if there is something in the directories
-    if os.listdir("{0}/pictures".format(config.LOCAL_PATH_RECORDINGS)):
+    dir_content = os.listdir("{0}/pictures".format(config.LOCAL_PATH_RECORDINGS))
+    if dir_content:
 
-        # Collect complete the whole data and store it in a list
-        data = wrap_recordings(config.LOCAL_PATH_RECORDINGS)
+        # Get the timestamps of the files in the directory
+        dir_timestamps = [file.split('.')[0] for file in dir_content]
 
+        # Collect the whole data and store it in a list
+        data = wrap_recordings(config.LOCAL_PATH_RECORDINGS, dir_timestamps)
+
+        # Send data to server
         token = auth_client(config.MSG_BROKER_BASE_URL, config.USER, config.PASSWORD)
         success = post_data(data, config.MSG_BROKER_BASE_URL, token)
 
+        # Remove all files that were sended
         if success:
-            remove_files(config.LOCAL_PATH_RECORDINGS, ["pictures", "distances", "outputs"])
+            remove_files(config.LOCAL_PATH_RECORDINGS, dir_timestamps)
 
     time.sleep(config.SENDER_SLEEP_TIME)
 
@@ -88,5 +92,5 @@ while True:
 # Idea, zip #
 #############
 # Maybe it is better to send all recordings directly as zip file
-# This causes less work for the client on the rasperry
+# This causes less work for the client on the RaspberryPi
 # I did not figure out how to json-serialize whole directories

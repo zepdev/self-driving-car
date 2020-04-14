@@ -24,8 +24,13 @@ services:
             - app-network
         expose:
             - "5000"
-#         ports:
-#             - "0.0.0.0:5000:5000"
+
+    nginx:
+        build: nginx
+        networks:
+            - app-network
+        ports:
+            - "80:80"
 
 networks:
     app-network:

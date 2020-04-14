@@ -25,7 +25,6 @@ def dataframe_to_csv_on_s3(dataframe, filename):
     s3_resource.Object(config.S3_BUCKET, filename).put(Body=csv_buffer.getvalue())
 
 
-# TODO: Write this function
 def picture_to_s3(pic, filename):
     s3_resource = boto3.resource("s3")
     s3_resource.Bucket(config.S3_BUCKET).put_object(Key=filename, Body=pic, ContentType='image/jpg') #ACL='public-read')
@@ -69,8 +68,7 @@ if __name__ == "__main__":
 
                 # send it to S3
                 try:
-                    pass
-                    # picture_to_s3(img,  f"{config.S3_DESTINATION}data/{datetime_to_iso(q['ts'])}.jpg")
+                    picture_to_s3(img,  f"{config.S3_DESTINATION}data/{datetime_to_iso(q['ts'])}.jpg")
                 except Exception as e:
                     logging.exception(e)
                     continue
@@ -85,7 +83,7 @@ if __name__ == "__main__":
 
                 # Send data frame to S3
                 try:
-                    # dataframe_to_csv_on_s3(df, filename)
+                    dataframe_to_csv_on_s3(df, filename)
                     logging.debug(filename)
                     logging.debug(df)
                 except Exception as e:
