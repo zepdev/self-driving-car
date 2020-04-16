@@ -9,6 +9,7 @@
 _old/*
 TensorBoard_logs/*
 01old/*
+recordings2*
 
 models/*
 *comments.json
