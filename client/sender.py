@@ -70,22 +70,24 @@ while True:
     # Check if there is something in the directories
     dir_content = os.listdir("{0}/pictures".format(config.LOCAL_PATH_RECORDINGS))
     if dir_content:
-
+        time.sleep(3)
         # Get the timestamps of the files in the directory
         dir_timestamps = [file.split('.')[0] for file in dir_content]
 
         # Collect the whole data and store it in a list
         data = wrap_recordings(config.LOCAL_PATH_RECORDINGS, dir_timestamps)
+        print(data)
 
         # Send data to server
-        token = auth_client(config.MSG_BROKER_BASE_URL, config.USER, config.PASSWORD)
-        success = post_data(data, config.MSG_BROKER_BASE_URL, token)
+        # token = auth_client(config.MSG_BROKER_BASE_URL, config.USER, config.PASSWORD)
+        #  success = post_data(data, config.MSG_BROKER_BASE_URL, token)
+        success=True
 
         # Remove all files that were sended
         if success:
             remove_files(config.LOCAL_PATH_RECORDINGS, dir_timestamps)
 
-    time.sleep(config.SENDER_SLEEP_TIME)
+    time.sleep(config.SENDER_SLEEP_TIME-3)
 
 
 #############

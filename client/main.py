@@ -4,8 +4,8 @@ import config
 import inputs
 import random
 import RPi.GPIO as GPIO
-from client.record import Record
-from client.drive import Drive
+from record import Record
+from drive import Drive
 from subprocess import call
 
 # Initialize pins
@@ -13,17 +13,19 @@ from subprocess import call
 GPIO.setmode(GPIO.BCM)
 TRIGGER_1 = 20
 GPIO.setup(TRIGGER_1, GPIO.OUT)
-TRIGGER_2 = 21
-GPIO.setup(TRIGGER_2, GPIO.OUT)
-TRIGGER_3 = 22
-GPIO.setup(TRIGGER_3, GPIO.OUT)
-
+# TRIGGER_2 = 21
+# GPIO.setup(TRIGGER_2, GPIO.OUT)
+# TRIGGER_3 = 22
+# GPIO.setup(TRIGGER_3, GPIO.OUT)
+# 
 ECHO_1 = 23
 GPIO.setup(ECHO_1, GPIO.IN)
-ECHO_2 = 24
-GPIO.setup(ECHO_2, GPIO.IN)
-ECHO_3 = 25
-GPIO.setup(ECHO_3, GPIO.IN)
+# ECHO_2 = 24
+# GPIO.setup(ECHO_2, GPIO.IN)
+# ECHO_3 = 25
+# GPIO.setup(ECHO_3, GPIO.IN)
+
+GPIO.output(TRIGGER_1, GPIO.LOW)
 
 SERVO_PIN = 18
 GPIO.setup(SERVO_PIN, GPIO.OUT)
