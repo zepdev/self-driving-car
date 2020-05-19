@@ -12,7 +12,8 @@ services:
     build: app
     devices:
       - "/dev/gpiomem:/dev/gpiomem"
-      - "gamepads:gamepads"
+      #- "/dev/ttyAMA0:/dev/ttyAMA0"
+      # this would be bluetooth
     env_file:
       - config.env
     networks:
