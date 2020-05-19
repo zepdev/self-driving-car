@@ -1,5 +1,4 @@
 import json
-import uuid
 import time
 import redis
 import boto3

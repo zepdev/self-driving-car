@@ -1,8 +1,7 @@
 import time
-import json
 import datetime
 import base64
-import numpy as np
+from io import BytesIO
 import RPi.GPIO as GPIO
 from picamera import PiCamera
 
@@ -48,12 +47,9 @@ class Record():
         current_time = self._convert_time(datetime.datetime.now())
         
         # picture
-        pic_shape = self.camera.resolution
-        pic_shape.append(3)
-        pic = np.empty(tuple(pic_shape), dtype=np.uint8)
-        self.camera(pic, 'rgb')
-        pic = pic.tolist()
-        pic_binary = base64.b64encode(pic)
+        stream = BytesIO()
+        self.camera.capture(stream, 'jpeg')
+        pic_binary = base64.b64encode(stream.getvalue())
         pic_str = pic_binary.decode("utf-8")
         
         # gamepad
