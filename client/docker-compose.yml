@@ -1,0 +1,31 @@
+version: "3.7"
+
+services:
+  redis:
+    build: redis
+    networks:
+      - app-network
+    expose:
+      - "6379"
+
+  logger:
+    build: app
+    env_file:
+      - config.env
+    networks:
+      - app-network
+    depends_on:
+      - redis
+
+  sender:
+    build: sender
+    env_file:
+      - config.env
+    networks:
+      - app-network
+    depends_on:
+      - redis
+
+
+networks:
+    app-network:

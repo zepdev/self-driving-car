@@ -1,20 +1,25 @@
 import time
 import json
 import datetime
+import base64
+import numpy as np
 import RPi.GPIO as GPIO
 from picamera import PiCamera
 
 
 class Record():
-	
-    def __init__(self, triggers, echos, rec_path, cam_res=(224, 224)):
+    def __init__(self, triggers, echos, cam_res=None):
+        # resolution has to be a multiple of 32 (32*7 =224)
+        if cam_res is None:
+            cam_res = [224, 224]
         self.TRIGGERS = triggers
         self.ECHOS = echos
         
         self.camera = PiCamera()
-        self.camera.resolution = cam_res
+        self.camera.resolution = tuple(cam_res)
 
-        self.rec_path = rec_path
+        # Allow some time for the initialization
+        time.sleep(2)
         
     @staticmethod
     def _measure_distance(trigger, echo):
@@ -30,7 +35,7 @@ class Record():
         return distance
 
     @staticmethod
-    def _datetime_to_filename(time):
+    def _convert_time(time):
         # time is generated with datetime.datetime.now()
         iso = time.isoformat(sep="_")
         iso = '-'.join(iso.split(':'))
@@ -39,20 +44,25 @@ class Record():
         return iso
 
     def record(self, output_dict):
-        filename = self._datetime_to_filename(datetime.datetime.now())
+        recs = []
+        current_time = self._convert_time(datetime.datetime.now())
         
         # picture
-        self.camera.capture("{0}/pictures/{1}.jpg".format(self.rec_path, filename))
+        pic_shape = self.camera.resolution
+        pic_shape.append(3)
+        pic = np.empty(tuple(pic_shape), dtype=np.uint8)
+        self.camera(pic, 'rgb')
+        pic = pic.tolist()
+        pic_binary = base64.b64encode(pic)
+        pic_str = pic_binary.decode("utf-8")
         
-        # outputs
+        # gamepad
         out = {"ABS_RX": round((output_dict["ABS_RX"]+0.5)/32767.5, 1), "ABS_Y": -round((output_dict["ABS_Y"]+0.5)/32767.5, 1)}
-        with open("{0}/outputs/{1}.json".format(self.rec_path, filename), "w") as f:
-                json.dump(out, f)
                 
         # distances
         dists = {}
         for i in range(len(self.TRIGGERS)):
-                dists["dist_{0}".format(i)] = self._measure_distance(self.TRIGGERS[i], self.ECHOS[i])
+            dists["dist_{0}".format(i)] = self._measure_distance(self.TRIGGERS[i], self.ECHOS[i])
 
-        with open("{0}/distances/{1}.json".format(self.rec_path, filename), "w") as f:
-                json.dump(dists, f)
+        recs.append({"ts": current_time, "pic": pic_str, "dist": dists, "out": out})
+        return recs

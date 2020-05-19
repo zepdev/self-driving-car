@@ -1,0 +1,4 @@
+redis==3.4.1
+numpy==1.18.1
+inputs==0.5
+picamera==1.13
