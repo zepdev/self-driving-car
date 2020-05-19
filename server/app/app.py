@@ -20,6 +20,11 @@ app.config["SECRET_KEY"] = "super-secret-key-zep-123"
 jwt = JWT(app, authenticate, identity)
 
 
+@app.route("/", methods=["GET"])
+def home():
+    return make_response(jsonify({"success": True}))
+
+
 @app.route("/post-message", methods=["POST"])
 @jwt_required()
 def receive_message():
