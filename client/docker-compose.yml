@@ -10,6 +10,9 @@ services:
 
   app:
     build: app
+    devices:
+      - "/dev/gpiomem:/dev/gpiomem"
+      - "gamepads:gamepads"
     env_file:
       - config.env
     networks:

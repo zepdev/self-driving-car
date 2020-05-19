@@ -4,7 +4,7 @@ import json
 import redis
 import config
 import logging
-from connector import APIConnector, TestConnector
+from connector import APIConnector
 
 # Setup redis
 db = redis.StrictRedis(host=config.REDIS_HOST, port=config.REDIS_PORT, db=config.DB_ID)
