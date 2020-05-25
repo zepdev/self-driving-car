@@ -62,6 +62,12 @@ time.sleep(SLEEP_TIME)
 
 # Start
 logging.info("Ready!")
+
+# TODO: This is just for testing.
+recs = recording.record(output_dict)
+db.rpush(config.QUEUE_NAME, json.dumps(recs))
+logging.debug("Sent recordings to redis queue.")
+
 try:
     while True:
 
