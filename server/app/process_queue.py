@@ -1,5 +1,4 @@
 import json
-import uuid
 import time
 import redis
 import boto3
@@ -53,7 +52,6 @@ if __name__ == "__main__":
             index = []
             for q in queue:
                 q = json.loads(q.decode("utf-8"))
-
                 # distances and output
                 d = q['dist'].copy()
                 d.update(q['out'])
