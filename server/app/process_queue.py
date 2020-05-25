@@ -52,8 +52,6 @@ if __name__ == "__main__":
             index = []
             for q in queue:
                 q = json.loads(q.decode("utf-8"))
-                logging.debug(f"{type(q)}")
-                logging.debug(f"{q}")
                 # distances and output
                 d = q['dist'].copy()
                 d.update(q['out'])

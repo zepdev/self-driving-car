@@ -43,7 +43,6 @@ class Record():
         return iso
 
     def record(self, output_dict):
-        recs = []
         current_time = self._convert_time(datetime.datetime.now())
         
         # picture
@@ -60,5 +59,5 @@ class Record():
         for i in range(len(self.TRIGGERS)):
             dists["dist_{0}".format(i)] = self._measure_distance(self.TRIGGERS[i], self.ECHOS[i])
 
-        recs.append({"ts": current_time, "pic": pic_str, "dist": dists, "out": out})
+        recs = {"ts": current_time, "pic": pic_str, "dist": dists, "out": out}
         return recs
