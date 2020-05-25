@@ -38,15 +38,15 @@ class Record():
         return distance
 
     @staticmethod
-    def _convert_time(time):
+    def _convert_time(current_time):
         # time is generated with datetime.datetime.now()
-        iso = time.isoformat(sep="_")
+        iso = current_time.isoformat(sep="_")
         iso = '-'.join(iso.split(':'))
         iso = iso.replace('.', '-')
         # Example: 2020-04-14_12-44-41-296481
         return iso
 
-    def record(self, output_dict):
+    def record(self, out_dict):
         current_time = self._convert_time(datetime.datetime.now())
         
         # picture
@@ -56,15 +56,15 @@ class Record():
         pic_str = pic_binary.decode("utf-8")
         
         # gamepad
-        out = {"ABS_RX": round((output_dict["ABS_RX"]+0.5)/32767.5, 1), "ABS_Y": -round((output_dict["ABS_Y"]+0.5)/32767.5, 1)}
+        out = {"ABS_RX": round((out_dict["ABS_RX"]+0.5)/32767.5, 1), "ABS_Y": -round((out_dict["ABS_Y"]+0.5)/32767.5, 1)}
                 
         # distances
         dists = {}
         for i in range(len(self.TRIGGERS)):
             dists["dist_{0}".format(i)] = self._measure_distance(self.TRIGGERS[i], self.ECHOS[i])
 
-        recs = {"ts": current_time, "pic": pic_str, "dist": dists, "out": out}
-        return recs
+        recordings = {"ts": current_time, "pic": pic_str, "dist": dists, "out": out}
+        return recordings
 
 
 if __name__ == "__main__":
@@ -74,23 +74,28 @@ if __name__ == "__main__":
 
     # Initialize redis
     db = redis.StrictRedis(host=config.REDIS_HOST, port=config.REDIS_PORT, db=config.DB_ID)
-    gamepad = db.pubsub()
-    gamepad.subscribe(config.CHANNEL_GAMEPAD)
+
+    # Initialize pins
+    GPIO.setmode(GPIO.BCM)
+    for pin in config.TRIGGERS + config.ECHOS:
+        GPIO.setup(pin, GPIO.OUT)
 
     # Instantiate Record class
     recording = Record(config.TRIGGERS, config.ECHOS)
 
     # Start
+    time.sleep(1)
     logging.info("Recording process is ready!")
     while True:
-        # Get current output_dict
-        pad = gamepad.get_message()
-        if pad is not None:
-            output_dict = json.loads(pad["data"])
-        else:
-            continue
 
-        # Check if recording is requested
+        # Get current output_dict
+        pad = db.get(config.GAMEPAD)
+        if pad is None:
+            continue
+        else:
+            output_dict = json.loads(pad)
+
+        # Record if requested
         if output_dict["BTN_TL"] == 1 and output_dict["BTN_TR"] == 1:
             recs = recording.record(output_dict)
             db.rpush(config.QUEUE_NAME, json.dumps(recs))

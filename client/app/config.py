@@ -1,12 +1,11 @@
 import logging
-import RPi.GPIO as GPIO
 
 # Redis
 REDIS_HOST = "localhost"
 REDIS_PORT = "6379"
 DB_ID = "0"
 QUEUE_NAME = "queue"
-CHANNEL_GAMEPAD = "gamepad"
+GAMEPAD = "gamepad"
 
 # Logging
 LOG_LEVEL = "DEBUG"
@@ -24,6 +23,7 @@ ECHOS = [ECHO_1]
 SERVO_PIN = 18
 
 # Others
-RECORD_SLEEP_TIME = 0.3
+RECORD_SLEEP_TIME = 0.5
+MAIN_SLEEP_TIME = 1
 
 

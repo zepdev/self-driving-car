@@ -29,7 +29,12 @@ while True:
     if len(data) > 0:
 
         # Send data to server
-        status = sender.post_data(data, token)
+        try:
+            status = sender.post_data(data, token)
+        except Exception as e:
+            logging.error(e)
+            time.sleep(config.SLEEP_TIME)
+            continue
 
         if status == 200:
             # Remove all items that were sent to the server
