@@ -1,6 +1,10 @@
 import time
-import datetime
+import json
+import redis
 import base64
+import config
+import logging
+import datetime
 from io import BytesIO
 import RPi.GPIO as GPIO
 from picamera import PiCamera
@@ -61,3 +65,35 @@ class Record():
 
         recs = {"ts": current_time, "pic": pic_str, "dist": dists, "out": out}
         return recs
+
+
+if __name__ == "__main__":
+
+    logging.info("Recording process is starting ... ")
+    logging.debug("Warning: Debugging is enabled.")
+
+    # Initialize redis
+    db = redis.StrictRedis(host=config.REDIS_HOST, port=config.REDIS_PORT, db=config.DB_ID)
+    gamepad = db.pubsub()
+    gamepad.subscribe(config.CHANNEL_GAMEPAD)
+
+    # Instantiate Record class
+    recording = Record(config.TRIGGERS, config.ECHOS)
+
+    # Start
+    logging.info("Recording process is ready!")
+    while True:
+        # Get current output_dict
+        pad = gamepad.get_message()
+        if pad is not None:
+            output_dict = json.loads(pad["data"])
+        else:
+            continue
+
+        # Check if recording is requested
+        if output_dict["BTN_TL"] == 1 and output_dict["BTN_TR"] == 1:
+            recs = recording.record(output_dict)
+            db.rpush(config.QUEUE_NAME, json.dumps(recs))
+            logging.debug("Sent recordings to redis queue.")
+
+        time.sleep(config.RECORD_SLEEP_TIME)
