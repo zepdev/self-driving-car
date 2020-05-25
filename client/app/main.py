@@ -20,14 +20,14 @@ db = redis.StrictRedis(host=config.REDIS_HOST, port=config.REDIS_PORT, db=config
 # Initialize pins
 #######CHOOSE PINS WHICH ARE NOT USED BY MOTOR DRIVER HAT#########
 GPIO.setmode(GPIO.BCM)
-TRIGGER_1 = 20
+TRIGGER_1 = 21 # 20
 GPIO.setup(TRIGGER_1, GPIO.OUT)
 # TRIGGER_2 = 21
 # GPIO.setup(TRIGGER_2, GPIO.OUT)
 # TRIGGER_3 = 22
 # GPIO.setup(TRIGGER_3, GPIO.OUT)
 
-ECHO_1 = 23
+ECHO_1 = 24 # 23
 GPIO.setup(ECHO_1, GPIO.IN)
 # ECHO_2 = 24
 # GPIO.setup(ECHO_2, GPIO.IN)
@@ -46,7 +46,7 @@ driving = Drive(SERVO_PIN)
 # Instantiate record class
 TRIGGERS = [TRIGGER_1]  # , TRIGGER_2, TRIGGER_3]
 ECHOS = [ECHO_1]  # , ECHO_2, ECHO_3]
-recording = Record(TRIGGERS, ECHOS, config.LOCAL_PATH_RECORDINGS)
+recording = Record(TRIGGERS, ECHOS)
 
 # Check connection with gamepad
 pads = inputs.devices.gamepads
