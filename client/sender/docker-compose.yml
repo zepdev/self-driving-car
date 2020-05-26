@@ -8,19 +8,6 @@ services:
     ports:
       - "6379:6379"
 
-#  app:
-#    build: app
-#    devices:
-#      - "/dev/gpiomem:/dev/gpiomem"
-#      #- "/dev/ttyUSB0:/dev/ttyUSB0"
-#      #- "/dev/ttyAMA0:/dev/ttyAMA0"
-#    env_file:
-#      - config.env
-#    networks:
-#      - app-network
-#    depends_on:
-#      - redis
-
   sender:
     build: sender
     env_file:
