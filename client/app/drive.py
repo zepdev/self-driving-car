@@ -8,9 +8,9 @@ class Drive():
     def __init__(self, servo_pin):
         self.FACTOR = 150
         
-        self.SERVO_MIN_ANGLE = 5.1
-        self.SERVO_MIDDLE_ANGLE = 7.1
-        self.SERVO_MAX_ANGLE = 9.1
+        self.SERVO_MIN_ANGLE = 4.5
+        self.SERVO_MIDDLE_ANGLE = 7
+        self.SERVO_MAX_ANGLE = 9.5
         
         self.servo = GPIO.PWM(servo_pin,50)
         self.servo.start(self.SERVO_MIDDLE_ANGLE)

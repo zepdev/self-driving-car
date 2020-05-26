@@ -1,3 +1,4 @@
+import sys
 import time
 import json
 import redis
@@ -17,6 +18,8 @@ class Record():
             cam_res = [224, 224]
         self.TRIGGERS = triggers
         self.ECHOS = echos
+        
+        
         
         self.camera = PiCamera()
         self.camera.resolution = tuple(cam_res)
@@ -61,7 +64,7 @@ class Record():
         # distances
         dists = {}
         for i in range(len(self.TRIGGERS)):
-            dists["dist_{0}".format(i)] = self._measure_distance(self.TRIGGERS[i], self.ECHOS[i])
+            dists[f"dist_{i}"] = self._measure_distance(self.TRIGGERS[i], self.ECHOS[i])
 
         recordings = {"ts": current_time, "pic": pic_str, "dist": dists, "out": out}
         return recordings
@@ -77,8 +80,11 @@ if __name__ == "__main__":
 
     # Initialize pins
     GPIO.setmode(GPIO.BCM)
-    for pin in config.TRIGGERS + config.ECHOS:
+    for pin in config.TRIGGERS:
         GPIO.setup(pin, GPIO.OUT)
+        GPIO.output(pin, GPIO.LOW)
+    for pin in config.ECHOS:
+        GPIO.setup(pin, GPIO.IN)
 
     # Instantiate Record class
     recording = Record(config.TRIGGERS, config.ECHOS)
@@ -86,19 +92,25 @@ if __name__ == "__main__":
     # Start
     time.sleep(1)
     logging.info("Recording process is ready!")
-    while True:
+    try:
+        while True:
 
-        # Get current output_dict
-        pad = db.get(config.GAMEPAD)
-        if pad is None:
-            continue
-        else:
-            output_dict = json.loads(pad)
+            # Get current output_dict
+            pad = db.get(config.GAMEPAD)
+            if pad is None:
+                continue
+            else:
+                output_dict = json.loads(pad)
 
-        # Record if requested
-        if output_dict["BTN_TL"] == 1 and output_dict["BTN_TR"] == 1:
-            recs = recording.record(output_dict)
-            db.rpush(config.QUEUE_NAME, json.dumps(recs))
-            logging.debug("Sent recordings to redis queue.")
+            # Record if requested
+            if output_dict["BTN_TL"] == 1 and output_dict["BTN_TR"] == 1:
+                recs = recording.record(output_dict)
+                db.rpush(config.QUEUE_NAME, json.dumps(recs))
+                logging.debug("Sent recordings to redis queue.")
 
+            time.sleep(config.RECORD_SLEEP_TIME)
+            
+    except KeyboardInterrupt:
         time.sleep(config.RECORD_SLEEP_TIME)
+        GPIO.cleanup()
+        sys.exit()

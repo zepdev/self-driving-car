@@ -16,6 +16,7 @@ logging.debug("Warning: Debugging is enabled.")
 db = redis.StrictRedis(host=config.REDIS_HOST, port=config.REDIS_PORT, db=config.DB_ID)
 
 # Instantiate driving class
+GPIO.setmode(GPIO.BCM)
 GPIO.setup(config.SERVO_PIN, GPIO.OUT)
 driving = Drive(config.SERVO_PIN)
 
