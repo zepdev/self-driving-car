@@ -1,6 +1,11 @@
+import sys
 import time
-import datetime
+import json
+import redis
 import base64
+import config
+import logging
+import datetime
 from io import BytesIO
 import RPi.GPIO as GPIO
 from picamera import PiCamera
@@ -13,6 +18,8 @@ class Record():
             cam_res = [224, 224]
         self.TRIGGERS = triggers
         self.ECHOS = echos
+        
+        
         
         self.camera = PiCamera()
         self.camera.resolution = tuple(cam_res)
@@ -34,15 +41,15 @@ class Record():
         return distance
 
     @staticmethod
-    def _convert_time(time):
+    def _convert_time(current_time):
         # time is generated with datetime.datetime.now()
-        iso = time.isoformat(sep="_")
+        iso = current_time.isoformat(sep="_")
         iso = '-'.join(iso.split(':'))
         iso = iso.replace('.', '-')
         # Example: 2020-04-14_12-44-41-296481
         return iso
 
-    def record(self, output_dict):
+    def record(self, out_dict):
         current_time = self._convert_time(datetime.datetime.now())
         
         # picture
@@ -52,12 +59,58 @@ class Record():
         pic_str = pic_binary.decode("utf-8")
         
         # gamepad
-        out = {"ABS_RX": round((output_dict["ABS_RX"]+0.5)/32767.5, 1), "ABS_Y": -round((output_dict["ABS_Y"]+0.5)/32767.5, 1)}
+        out = {"ABS_RX": round((out_dict["ABS_RX"]+0.5)/32767.5, 1), "ABS_Y": -round((out_dict["ABS_Y"]+0.5)/32767.5, 1)}
                 
         # distances
         dists = {}
         for i in range(len(self.TRIGGERS)):
-            dists["dist_{0}".format(i)] = self._measure_distance(self.TRIGGERS[i], self.ECHOS[i])
+            dists[f"dist_{i}"] = self._measure_distance(self.TRIGGERS[i], self.ECHOS[i])
 
-        recs = {"ts": current_time, "pic": pic_str, "dist": dists, "out": out}
-        return recs
+        recordings = {"ts": current_time, "pic": pic_str, "dist": dists, "out": out}
+        return recordings
+
+
+if __name__ == "__main__":
+
+    logging.info("Recording process is starting ... ")
+    logging.debug("Warning: Debugging is enabled.")
+
+    # Initialize redis
+    db = redis.StrictRedis(host=config.REDIS_HOST, port=config.REDIS_PORT, db=config.DB_ID)
+
+    # Initialize pins
+    GPIO.setmode(GPIO.BCM)
+    for pin in config.TRIGGERS:
+        GPIO.setup(pin, GPIO.OUT)
+        GPIO.output(pin, GPIO.LOW)
+    for pin in config.ECHOS:
+        GPIO.setup(pin, GPIO.IN)
+
+    # Instantiate Record class
+    recording = Record(config.TRIGGERS, config.ECHOS)
+
+    # Start
+    time.sleep(1)
+    logging.info("Recording process is ready!")
+    try:
+        while True:
+
+            # Get current output_dict
+            pad = db.get(config.GAMEPAD)
+            if pad is None:
+                continue
+            else:
+                output_dict = json.loads(pad)
+
+            # Record if requested
+            if output_dict["BTN_TL"] == 1 and output_dict["BTN_TR"] == 1:
+                recs = recording.record(output_dict)
+                db.rpush(config.QUEUE_NAME, json.dumps(recs))
+                logging.debug("Sent recordings to redis queue.")
+
+            time.sleep(config.RECORD_SLEEP_TIME)
+            
+    except KeyboardInterrupt:
+        time.sleep(config.RECORD_SLEEP_TIME)
+        GPIO.cleanup()
+        sys.exit()
