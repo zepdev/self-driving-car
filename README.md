@@ -1,14 +1,14 @@
 ## client
 - Runs on RCcar (RaspberryPi). Two applications, `app` and `sender`, they should run together.
-- app: Main application for driving the car. Run the script `run.sh`.
-- sender: This is a docker application that send data to the server. Run it with docker-compose:
+- app: Main application for driving the car. Start via `bash run.sh`.
+- sender: This is a docker application that sends data to the server. Run it with docker-compose:
 
 ```
 $ docker-compose build
 $ docker-compose up
 ```
 
-The RPi should have internet connection
+Info: The RPi should have internet connection through WiFi.
 
 
 ## server
