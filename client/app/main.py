@@ -18,7 +18,7 @@ db = redis.StrictRedis(host=config.REDIS_HOST, port=config.REDIS_PORT, db=config
 # Instantiate driving class
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(config.SERVO_PIN, GPIO.OUT)
-driving = Drive(config.SERVO_PIN)
+driving = Drive(config.SERVO_PIN, config.servo_angles)
 
 # Check connection with gamepad
 pads = inputs.devices.gamepads

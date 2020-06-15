@@ -18,9 +18,7 @@ class Record():
             cam_res = [224, 224]
         self.TRIGGERS = triggers
         self.ECHOS = echos
-        
-        
-        
+
         self.camera = PiCamera()
         self.camera.resolution = tuple(cam_res)
 

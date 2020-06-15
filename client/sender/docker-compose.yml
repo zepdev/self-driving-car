@@ -3,6 +3,7 @@ version: "3.7"
 services:
   redis:
     build: redis
+    restart: always
     networks:
       - app-network
     ports:
@@ -10,12 +11,14 @@ services:
 
   sender:
     build: sender
+    restart: always
     env_file:
       - config.env
     networks:
       - app-network
     depends_on:
       - redis
+
 
 
 networks:
