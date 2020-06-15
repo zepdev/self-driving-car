@@ -29,7 +29,7 @@ if len(pads) == 0:
 output_dict = {"BTN_TL": 0, "BTN_TR": 0, "ABS_RX": 0, "ABS_Y": 0, "BTN_EAST": 0}
 
 # Start
-time.sleep(config.MAIN_SLEEP_TIME)
+time.sleep(config.START_SLEEP_TIME)
 logging.info("Main process is ready!")
 try:
     while True:

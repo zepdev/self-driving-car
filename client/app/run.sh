@@ -4,8 +4,7 @@
 
 cd /
 cd home/pi/self-driving-car/client/app
-sleep 3
-python3 record.py
-sleep 3
-python3 main.py
+python3 record.py &
+sleep 1
+python3 main.py &
 cd /
