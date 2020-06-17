@@ -18,9 +18,7 @@ class Record():
             cam_res = [224, 224]
         self.TRIGGERS = triggers
         self.ECHOS = echos
-        
-        
-        
+
         self.camera = PiCamera()
         self.camera.resolution = tuple(cam_res)
 
@@ -90,7 +88,7 @@ if __name__ == "__main__":
     recording = Record(config.TRIGGERS, config.ECHOS)
 
     # Start
-    time.sleep(1)
+    time.sleep(config.START_SLEEP_TIME)
     logging.info("Recording process is ready!")
     try:
         while True:

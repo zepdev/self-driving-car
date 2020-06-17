@@ -1,18 +1,17 @@
-import time
 import RPi.GPIO as GPIO
 from dual_g2_hpmd_rpi import motors
 
 
 class Drive():
     
-    def __init__(self, servo_pin):
-        self.FACTOR = 150
+    def __init__(self, servo_pin, servo_angles):
+        self.MOTOR_FACTOR = 150
         
-        self.SERVO_MIN_ANGLE = 4.5
-        self.SERVO_MIDDLE_ANGLE = 7
-        self.SERVO_MAX_ANGLE = 9.5
+        self.SERVO_MIN_ANGLE = servo_angles["SERVO_MIN_ANGLE"]
+        self.SERVO_MIDDLE_ANGLE = servo_angles["SERVO_MIDDLE_ANGLE"]
+        self.SERVO_MAX_ANGLE = servo_angles["SERVO_MAX_ANGLE"]
         
-        self.servo = GPIO.PWM(servo_pin,50)
+        self.servo = GPIO.PWM(servo_pin, 50)
         self.servo.start(self.SERVO_MIDDLE_ANGLE)
         
         motors.enable()
@@ -32,10 +31,6 @@ class Drive():
         self.servo.stop()
     
     def drive(self, output_dict):
-        self.motor.setSpeed((-round((output_dict["ABS_Y"]+0.5)/32767.5, 1))*self.FACTOR)
+        self.motor.setSpeed((-round((output_dict["ABS_Y"]+0.5)/32767.5, 1))*self.MOTOR_FACTOR)
         servo_angle = self._steer(-round((output_dict["ABS_RX"]+0.5)/32767.5, 1)) 
         self.servo.ChangeDutyCycle(servo_angle)
-        
-    
-    #bei drive koennten wir ein if statement einbauen, dass sich der Motor auch schon bei einem Input-Signal von 0.1 oder 0.2 dreht 
-    #(Range: 40 bis 120 und -40 bis -120)

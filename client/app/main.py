@@ -18,7 +18,7 @@ db = redis.StrictRedis(host=config.REDIS_HOST, port=config.REDIS_PORT, db=config
 # Instantiate driving class
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(config.SERVO_PIN, GPIO.OUT)
-driving = Drive(config.SERVO_PIN)
+driving = Drive(config.SERVO_PIN, config.servo_angles)
 
 # Check connection with gamepad
 pads = inputs.devices.gamepads
@@ -29,7 +29,7 @@ if len(pads) == 0:
 output_dict = {"BTN_TL": 0, "BTN_TR": 0, "ABS_RX": 0, "ABS_Y": 0, "BTN_EAST": 0}
 
 # Start
-time.sleep(config.MAIN_SLEEP_TIME)
+time.sleep(config.START_SLEEP_TIME)
 logging.info("Main process is ready!")
 try:
     while True:

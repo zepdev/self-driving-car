@@ -8,7 +8,7 @@ QUEUE_NAME = "queue"
 GAMEPAD = "gamepad"
 
 # Logging
-LOG_LEVEL = "DEBUG"
+LOG_LEVEL = "INFO"
 logging.basicConfig(format="%(asctime)s %(message)s", level=LOG_LEVEL)
 
 # Pins
@@ -22,7 +22,15 @@ TRIGGERS = [TRIGGER_1]#, TRIGGER_2]#, TRIGGER_3]
 ECHOS = [ECHO_1]#, ECHO_2]#, ECHO_3]
 SERVO_PIN = 18
 
+# Servo angles
+servo_angles = {
+    "SERVO_MIN_ANGLE": 4.5,
+    "SERVO_MIDDLE_ANGLE": 7,
+    "SERVO_MAX_ANGLE": 9.5
+}
+
 # Others
+START_SLEEP_TIME = 45  # Sleep long on autostart to give docker-compose time to start
 RECORD_SLEEP_TIME = 0.6
 MAIN_SLEEP_TIME = 1
 
