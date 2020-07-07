@@ -22,7 +22,7 @@ GPIO.setup(config.SERVO_PIN, GPIO.OUT)
 driving = Drive(config.SERVO_PIN, config.servo_angles)
 
 # Instantiate autopilot
-autopilot = Autopilot(model_name=config.model_name)
+autopilot = Autopilot(model_path=config.model_path)
 
 # Check connection with gamepad
 pads = inputs.devices.gamepads
@@ -52,7 +52,7 @@ try:
                 # update Cache
                 output_dict[event.code] = event.state
 
-                if output_dict["BTN_EAST"] == 1:
+                if output_dict["BTN_EAST"] == 1:  # RED Button
                     output_dict = autopilot.predict(output_dict)
                 driving.drive(output_dict)
                 db.set(config.GAMEPAD, json.dumps(output_dict))  # update_cache

@@ -35,5 +35,5 @@ RECORD_SLEEP_TIME = 0.6
 MAIN_SLEEP_TIME = 1
 
 # model
-model_name = "nils_model_converted.tflite"
+model_path = "models/nils_model_converted.tflite"
 

@@ -7,7 +7,7 @@ import tflite_runtime.interpreter as tflite
 
 class Autopilot():
 
-    def __init__(self, model_name, cam_res=None):
+    def __init__(self, model_path, cam_res=None):
 
         # camera
         if cam_res is None:
@@ -15,11 +15,8 @@ class Autopilot():
         self.camera = PiCamera()
         self.camera.resolution = tuple(cam_res)
 
-        # model path
-        self.model_path = f"models/{model_name}"
-
         # load model
-        self.interpreter = tflite.Interpreter(model_path=self.model_path)
+        self.interpreter = tflite.Interpreter(model_path=model_path)
         self.interpreter.allocate_tensors()
 
         self.input_details = self.interpreter.get_input_details()
