@@ -29,28 +29,22 @@ class Autopilot():
 
     def predict(self, output_dict):
 
-        image = np.empty((self.height, self.width, 3), dtype=np.uint8)
-        self.camera.capture(image, 'rgb')
+        stream = BytesIO()
+        self.camera.capture(stream, 'jpeg')
+        image = Image.open(stream).convert('RGB').resize((self.width, self.height), Image.ANTIALIAS)
+        image = np.array(image)
+        image = image.astype(np.float32)
         image = np.expand_dims(image, axis=0)
 
-        # avoiding numpy (shape problems?)
-        # stream = BytesIO()
-        # self.camera.capture(stream, 'jpeg')
-        # image = Image.open(stream).convert('RGB').resize((self.width, self.height), Image.ANTIALIAS)
-
-        # image should be numpy ndarray with shape (1, height, width, 3)
         self.interpreter.set_tensor(self.input_details[0]['index'], image)
         self.interpreter.invoke()
 
         output_data = self.interpreter.get_tensor(self.output_details[0]['index'])
-        if self.output_shape == 1:
-            steering = output_data[0][0]
-            speed = 0.5
-        else:  # self.output_shape == 2:
-            steering = output_data[0][0]
-            speed = output_data[0][1]
-
+        if self.output_shape == 2:
+            speed = (output_data[0][1] + 1) * 0.5
+            output_dict["ABS_Y"] = speed
+        steering = output_data[0][0]
         output_dict["ABS_RX"] = steering
-        output_dict["ABS_Y"] = speed
+
         return output_dict
 
