@@ -7,6 +7,7 @@ import inputs
 import logging
 import RPi.GPIO as GPIO
 from drive import Drive
+from autopilot import Autopilot
 from subprocess import call
 
 logging.info("Main process is starting ... ")
@@ -19,6 +20,9 @@ db = redis.StrictRedis(host=config.REDIS_HOST, port=config.REDIS_PORT, db=config
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(config.SERVO_PIN, GPIO.OUT)
 driving = Drive(config.SERVO_PIN, config.servo_angles)
+
+# Instantiate autopilot
+autopilot = Autopilot(model_name=config.model_name)
 
 # Check connection with gamepad
 pads = inputs.devices.gamepads
@@ -49,10 +53,9 @@ try:
                 output_dict[event.code] = event.state
 
                 if output_dict["BTN_EAST"] == 1:
-                    pass  # self-drive
-                else:
-                    driving.drive(output_dict)  # manual driving
-                    db.set(config.GAMEPAD, json.dumps(output_dict))  # update_cache
+                    output_dict = autopilot.predict(output_dict)
+                driving.drive(output_dict)
+                db.set(config.GAMEPAD, json.dumps(output_dict))  # update_cache
 
 except KeyboardInterrupt:
     driving.disable()
