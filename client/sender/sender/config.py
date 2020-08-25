@@ -1,6 +1,14 @@
 import os
 import logging
 
+
+def str_to_bool(s):
+    if s == 'True':
+        return True
+    elif s == 'False':
+        return False
+
+
 # Redis
 REDIS_HOST = os.environ["REDIS_HOST"]
 REDIS_PORT = os.environ["REDIS_PORT"]
@@ -18,3 +26,6 @@ SLEEP_TIME = int(os.environ["SENDER_INTERVAL_SEC"])
 # Logging
 LOG_LEVEL = os.environ["LOG_LEVEL"]
 logging.basicConfig(format="%(asctime)s %(message)s", level=LOG_LEVEL)
+
+# Save locally
+SAVE_LOCALLY = str_to_bool(os.environ["SAVE_LOCALLY"])

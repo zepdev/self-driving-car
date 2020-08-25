@@ -40,6 +40,8 @@ class Autopilot():
         if self.output_shape == 2:
             speed = (output_data[0][1] + 1) * 0.5
             output_dict["ABS_Y"] = speed
+        else:  # self.output_shape == 1
+            output_dict["ABS_Y"] = 0.5
         steering = output_data[0][0]
         output_dict["ABS_RX"] = steering
 

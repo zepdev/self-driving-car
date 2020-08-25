@@ -9,11 +9,13 @@ from connector import APIConnector
 # Setup redis
 db = redis.StrictRedis(host=config.REDIS_HOST, port=config.REDIS_PORT, db=config.DB_ID)
 
-# Create an instance of APIConnector
-sender = APIConnector(msg_broker_base_url=config.MSG_BROKER_BASE_URL, user=config.USER, pwd=config.PASSWORD)
+if not config.SAVE_LOCALLY:
+    # Create an instance of APIConnector
+    sender = APIConnector(msg_broker_base_url=config.MSG_BROKER_BASE_URL, user=config.USER, pwd=config.PASSWORD)
+    # Authenticate the first time
+    token = sender.auth_client()
 
-# Authenticate the first time
-token = sender.auth_client()
+
 data = []
 
 logging.info("Successfully authenticated and connected to server on AWS. App started.")
@@ -28,9 +30,15 @@ while True:
 
     if len(data) > 0:
 
-        # Send data to server
         try:
-            status = sender.post_data(data, token)
+            if config.SAVE_LOCALLY:
+                # TODO: should save all items (jsons) in data at the host
+                # See tutorial here:
+                # https://www.digitalocean.com/community/tutorials/how-to-share-data-between-the-docker-container-and-the-host
+                status = 200
+            else:
+                # Send data to server
+                status = sender.post_data(data, token)
         except Exception as e:
             logging.error(e)
             time.sleep(config.SLEEP_TIME)
