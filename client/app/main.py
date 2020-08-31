@@ -6,7 +6,7 @@ import config
 import inputs
 import logging
 import RPi.GPIO as GPIO
-from drive import Drive
+from drive import Motor, Drive
 from autopilot import Autopilot
 from subprocess import call
 
@@ -16,9 +16,10 @@ logging.debug("Warning: Debugging is enabled.")
 # Setup redis
 db = redis.StrictRedis(host=config.REDIS_HOST, port=config.REDIS_PORT, db=config.DB_ID)
 
-# Instantiate driving class
+# Instantiate motor and driving class
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(config.SERVO_PIN, GPIO.OUT)
+motor = Motor() # could gice pins here
 driving = Drive(config.SERVO_PIN, config.servo_angles)
 
 # Instantiate autopilot

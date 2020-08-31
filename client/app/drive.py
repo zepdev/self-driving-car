@@ -1,5 +1,5 @@
 import RPi.GPIO as GPIO
-from dual_g2_hpmd_rpi import motors  # TODO: write this by myself, see below
+# from dual_g2_hpmd_rpi import motors
 
 
 class Motor():
@@ -7,48 +7,47 @@ class Motor():
     def __init__(self):
         # this is from the dual_g2_hpmd_rpi library
         self.pwm_pin = 13
-        self.dir_pin = 25
-        self.en_pin = 23
-        self.flt_pin = 6
+        self.pwm = GPIO.PWM(self.pwm_pin, 20000)  # set frequency
+        self.pwm.start(0)  # duty-cycle=0 -> speed=0
 
-        self.MAX_SPEED = 480
+        self.dir_pin = 25  # controls direction (forward/backward)
+        GPIO.setup(self.dir_pin, GPIO.OUT)
 
-        # TODO: Translate the following to GPIO: https://sourceforge.net/p/raspberry-gpio-python/wiki/PWM/
-        # (from pigpio: http://abyz.me.uk/rpi/pigpio/python.html)
+        self.en_pin = 23  # enables/ disables motor
+        GPIO.setup(self.en_pin, GPIO.OUT)
+        GPIO.output(self.en_pin, GPIO.HIGH) # enable driver by default
 
-        #_pi.set_pull_up_down(flt_pin, pigpio.PUD_UP)  # make sure FLT is pulled up
-        #_pi.write(en_pin, 1)  # enable driver by default
+        self.flt_pin = 6  # pin for faults, could write a function get-fault, see dual_g2_hpmd_rpi
+        GPIO.setup(self.flt_pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)  # make sure FLT is pulled up
+
+        self.MAX_SPEED = 100
 
     def setSpeed(self, speed):
         if speed < 0:
             speed = -speed
-            dir_value = 1
+            dir_value = 1  # backward
         else:
-            dir_value = 0
+            dir_value = 0  # forward
 
         if speed > self.MAX_SPEED:
             speed = self.MAX_SPEED
 
-        # TODO: translate this
-        #_pi.write(self.dir_pin, dir_value)
-        #_pi.hardware_PWM(self.pwm_pin, 20000, int(speed * 6250 / 3));
-          # 20 kHz PWM, duty cycle in range 0-1000000 as expected by pigpio
+        GPIO.output(self.dir_pin, dir_value)
+
+        GPIO.setup(self.pwm_pin, GPIO.OUT)
+        self.pwm.ChangeDutyCycle(speed)
 
     def enable(self):
-        # TODO: translate this
-        #_pi.write(self.en_pin, 1)
+        GPIO.output(self.en_pin, GPIO.HIGH)
 
     def disable(self):
-        # TODO: translate this
-        #_pi.write(self.en_pin, 0)
+        GPIO.output(self.en_pin, GPIO.LOW)
 
-
-# TODO: instantiate motor from Motor (maybe give the pins?) and change code below accordingly
 
 class Drive():
     
-    def __init__(self, servo_pin, servo_angles):
-        self.MOTOR_FACTOR = 150
+    def __init__(self, servo_pin, servo_angles, motor):
+        self.MOTOR_FACTOR = 50  # Value between 0 and 100. 100 = use full available power of motor
         
         self.SERVO_MIN_ANGLE = servo_angles["SERVO_MIN_ANGLE"]
         self.SERVO_MIDDLE_ANGLE = servo_angles["SERVO_MIDDLE_ANGLE"]
@@ -56,10 +55,10 @@ class Drive():
         
         self.servo = GPIO.PWM(servo_pin, 50)
         self.servo.start(self.SERVO_MIDDLE_ANGLE)
-        
-        motors.enable()
-        self.motor = motors.motor2
-        self.motor.setSpeed(0)
+
+        self.motor = motor
+        self.motor.enable()
+        # self.motor.setSpeed(0)
     
     def _steer(self, x):
         """
@@ -70,7 +69,7 @@ class Drive():
     
     def disable(self):
         self.motor.setSpeed(0)
-        motors.disable()
+        self.motor.disable()
         self.servo.stop()
     
     def drive(self, output_dict):
