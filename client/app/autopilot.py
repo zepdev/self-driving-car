@@ -1,7 +1,5 @@
-from PIL import Image
-from io import BytesIO
 import numpy as np
-from picamera import PiCamera
+from nanocamera import Camera
 import tflite_runtime.interpreter as tflite
 
 
@@ -12,8 +10,7 @@ class Autopilot():
         # camera
         if cam_res is None:
             cam_res = [224, 224]
-        self.camera = PiCamera()
-        self.camera.resolution = tuple(cam_res)
+        self.camera = Camera(device_id=0, flip=0, width=cam_res[0], height=cam_res[1], fps=30)
 
         # load model
         self.interpreter = tflite.Interpreter(model_path=model_path)
@@ -26,10 +23,11 @@ class Autopilot():
 
     def predict(self, output_dict):
 
-        stream = BytesIO()
-        self.camera.capture(stream, 'jpeg')
-        image = Image.open(stream).convert('RGB').resize((self.width, self.height), Image.ANTIALIAS)
-        image = np.array(image)
+        #stream = BytesIO()
+        #self.camera.capture(stream, 'jpeg')
+        #image = Image.open(stream).convert('RGB').resize((self.width, self.height), Image.ANTIALIAS)
+        #image = np.array(image)
+        image = self.camera.read()
         image = image.astype(np.float32)
         image = np.expand_dims(image, axis=0)
 

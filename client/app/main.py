@@ -17,9 +17,9 @@ logging.debug("Warning: Debugging is enabled.")
 db = redis.StrictRedis(host=config.REDIS_HOST, port=config.REDIS_PORT, db=config.DB_ID)
 
 # Instantiate motor and driving class
-GPIO.setmode(GPIO.BCM)
+GPIO.setmode(GPIO.BCM)  # BCM = GPIO PIN-numbering (NOT BOARD-Numbering)
 GPIO.setup(config.SERVO_PIN, GPIO.OUT)
-motor = Motor() # could gice pins here
+motor = Motor()  # could give pins here
 driving = Drive(config.SERVO_PIN, config.servo_angles)
 
 # Instantiate autopilot

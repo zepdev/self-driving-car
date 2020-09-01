@@ -8,7 +8,7 @@ import logging
 import datetime
 from io import BytesIO
 import RPi.GPIO as GPIO
-from picamera import PiCamera
+from nanocamera import Camera
 
 
 class Record():
@@ -19,8 +19,7 @@ class Record():
         self.TRIGGERS = triggers
         self.ECHOS = echos
 
-        self.camera = PiCamera()
-        self.camera.resolution = tuple(cam_res)
+        self.camera = Camera(device_id=0, flip=0, width=cam_res[0], height=cam_res[1], fps=30)
 
         # Allow some time for the initialization
         time.sleep(2)
@@ -51,9 +50,8 @@ class Record():
         current_time = self._convert_time(datetime.datetime.now())
         
         # picture
-        stream = BytesIO()
-        self.camera.capture(stream, 'jpeg')
-        pic_binary = base64.b64encode(stream.getvalue())
+        image = self.camera.read()
+        pic_binary = base64.b64encode(image)
         pic_str = pic_binary.decode("utf-8")
         
         # gamepad
