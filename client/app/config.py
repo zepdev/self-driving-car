@@ -20,7 +20,7 @@ ECHO_1 = 24
 #ECHO_3 = 25
 TRIGGERS = [TRIGGER_1]#, TRIGGER_2]#, TRIGGER_3]
 ECHOS = [ECHO_1]#, ECHO_2]#, ECHO_3]
-SERVO_PIN = 18
+SERVO_PIN = 12
 
 # Servo angles
 servo_angles = {
