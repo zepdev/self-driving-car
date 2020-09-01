@@ -20,7 +20,7 @@ db = redis.StrictRedis(host=config.REDIS_HOST, port=config.REDIS_PORT, db=config
 GPIO.setmode(GPIO.BCM)  # BCM = GPIO PIN-numbering (NOT BOARD-Numbering)
 GPIO.setup(config.SERVO_PIN, GPIO.OUT)
 motor = Motor()  # could give pins here
-driving = Drive(config.SERVO_PIN, config.servo_angles)
+driving = Drive(config.SERVO_PIN, config.servo_angles, motor)
 
 # Instantiate autopilot
 autopilot = Autopilot(model_path=config.model_path)

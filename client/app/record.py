@@ -6,7 +6,6 @@ import base64
 import config
 import logging
 import datetime
-from io import BytesIO
 import RPi.GPIO as GPIO
 from nanocamera import Camera
 
