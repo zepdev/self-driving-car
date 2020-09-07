@@ -26,7 +26,7 @@ if len(pads) == 0:
     raise Exception("Could not find gamepads!")
 
 # Cache for outputs from gamepad
-output_dict = {"BTN_TL": 0, "BTN_TR": 0, "ABS_RX": 0, "ABS_Y": 0, "BTN_EAST": 0}
+output_dict = {"BTN_TL": 0, "BTN_TR": 0, "ABS_RX": 0, "ABS_Y": 0, "BTN_EAST": 0, "BTN_NORTH": 1}
 
 # Start
 time.sleep(config.START_SLEEP_TIME)
@@ -51,6 +51,13 @@ try:
                 if output_dict["BTN_EAST"] == 0:
                     driving.drive(output_dict)  # drive, otherwise self-driving is enabled
                 db.set(config.GAMEPAD, json.dumps(output_dict))  # update redis cache
+
+            # stop script
+            if output_dict["BTN_NORTH"] == 1:
+                driving.disable()
+                time.sleep(config.MAIN_SLEEP_TIME)
+                GPIO.cleanup()
+                sys.exit()
 
 except KeyboardInterrupt:
     driving.disable()

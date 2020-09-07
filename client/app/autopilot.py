@@ -1,3 +1,4 @@
+import sys
 import json
 import time
 import redis
@@ -73,20 +74,30 @@ if __name__ == "__main__":
     time.sleep(config.START_SLEEP_TIME)
     logging.info("Autopilot process is ready!")
 
-    while True:
+    try:
+        while True:
 
-        # Get current output_dict
-        pad = db.get(config.GAMEPAD)
-        if pad is None:
-            continue
-        else:
-            output_dict = json.loads(pad)
+            # Get current output_dict
+            pad = db.get(config.GAMEPAD)
+            if pad is None:
+                continue
+            else:
+                output_dict = json.loads(pad)
 
-        # Drive autonomously if requested
-        if output_dict["BTN_EAST"] == 1:
-            print("hello")
-            time.sleep(0.5)
-            #output_dict = autopilot.predict(output_dict)
-            #driving.drive(output_dict)
+            # Drive autonomously if requested
+            if output_dict["BTN_EAST"] == 1:
+                print("hello")
+                time.sleep(0.5)
+                # output_dict = autopilot.predict(output_dict)
+                # driving.drive(output_dict)
 
-        time.sleep(config.RECORD_SLEEP_TIME)
+            # stop script
+            if output_dict["BTN_NORTH"] == 1:
+                time.sleep(config.MAIN_SLEEP_TIME)
+                GPIO.cleanup()
+                sys.exit()
+
+    except KeyboardInterrupt:
+    time.sleep(config.MAIN_SLEEP_TIME)
+    GPIO.cleanup()
+    sys.exit()
