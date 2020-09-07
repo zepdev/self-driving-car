@@ -7,7 +7,6 @@ import inputs
 import logging
 import RPi.GPIO as GPIO
 from drive import Motor, Drive
-from autopilot import Autopilot
 from subprocess import call
 
 logging.info("Main process is starting ... ")
@@ -28,7 +27,6 @@ if len(pads) == 0:
 
 # Cache for outputs from gamepad
 output_dict = {"BTN_TL": 0, "BTN_TR": 0, "ABS_RX": 0, "ABS_Y": 0, "BTN_EAST": 0}
-autopilot_active = False
 
 # Start
 time.sleep(config.START_SLEEP_TIME)
@@ -48,7 +46,6 @@ try:
                 GPIO.cleanup()
                 call("sudo poweroff", shell=True)
 
-            # update output_dict
             if event.code in output_dict.keys():
                 output_dict[event.code] = event.state  # update
                 if output_dict["BTN_EAST"] == 0:
