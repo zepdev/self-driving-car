@@ -94,10 +94,9 @@ if __name__ == "__main__":
             # stop script
             if output_dict["BTN_NORTH"] == 1:
                 time.sleep(config.MAIN_SLEEP_TIME)
-                GPIO.cleanup()
-                sys.exit()
+                sys.exit(0)
 
     except KeyboardInterrupt:
-    time.sleep(config.MAIN_SLEEP_TIME)
-    GPIO.cleanup()
-    sys.exit()
+        time.sleep(config.MAIN_SLEEP_TIME)
+        GPIO.cleanup()
+        sys.exit(0)
