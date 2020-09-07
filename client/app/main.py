@@ -42,10 +42,11 @@ try:
     while True:
 
         # Read all inputs from gamepad
-        events = inputs.get_gamepad()
-
+        events = inputs.get_gamepad()  # THIS BLOCKS UNTIL AN EVENT COMES !!! (Do same as record.py for autopilot.py)
+        
         # autopilot
         if len(events) == 0:
+            print("here")
             if output_dict["BTN_EAST"] == 1:
                 output_dict = autopilot.predict(output_dict)
                 driving.drive(output_dict)
@@ -57,7 +58,7 @@ try:
             continue
 
         for event in events:
-
+            print(f"{event.code}   {event.state}")
             # Check if shutdown is requested
             if event.code == "BTN_MODE":
                 driving.disable()

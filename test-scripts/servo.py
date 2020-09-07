@@ -1,15 +1,15 @@
-import RPi.GPIO as GPIO
+import Jetson.GPIO as GPIO
 import time
 
 GPIO.setmode(GPIO.BCM)
-GPIO.setup(18, GPIO.OUT)
+GPIO.setup(12, GPIO.OUT)
 
 sleep_time_short = 0.5
 sleep_time_long = 2
 
 #range: 3.5 - 11
-MIN_ANGLE = 5.5
-MAX_ANGLE = 8.5
+MIN_ANGLE = 4.5
+MAX_ANGLE = 9
 
 def stear(x):
 	"""
@@ -21,18 +21,13 @@ def stear(x):
 	return angle
 
 
-led = GPIO.PWM(18,50)
+led = GPIO.PWM(12,50)
 led.start(7) #middle
-time.sleep(sleep_time_long)
-
-
-for t in range(0, 11):
-	p = stear(float(t%2))
-	if t%10 == 0:
-		print(p)
-	led.ChangeDutyCycle(p)
-	time.sleep(sleep_time_long)
-
+time.sleep(sleep_time_short)
+led.ChangeDutyCycle(9)
+time.sleep(sleep_time_short)
+led.ChangeDutyCycle(4.5)
+time.sleep(sleep_time_short)
 led.ChangeDutyCycle(7)
 time.sleep(sleep_time_short)
 
