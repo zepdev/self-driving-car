@@ -18,12 +18,8 @@ db = redis.StrictRedis(host=config.REDIS_HOST, port=config.REDIS_PORT, db=config
 
 # Instantiate motor and driving class
 GPIO.setmode(GPIO.BCM)  # BCM = GPIO PIN-numbering (NOT BOARD-Numbering)
-GPIO.setup(config.SERVO_PIN, GPIO.OUT)
-motor = Motor()  # could give pins here
-driving = Drive(config.SERVO_PIN, config.servo_angles, motor)
-
-# Instantiate autopilot
-autopilot = Autopilot(model_path=config.model_path)
+motor = Motor(config.PWM_PIN, config.EN_PIN, config.DIR_PIN, config.FLT_PIN)
+driving = Drive(config.SERVO_PIN, config.servo_angles, motor, config.MAX_SPEED)
 
 # Check connection with gamepad
 pads = inputs.devices.gamepads
@@ -42,20 +38,7 @@ try:
     while True:
 
         # Read all inputs from gamepad
-        events = inputs.get_gamepad()  # THIS BLOCKS UNTIL AN EVENT COMES !!! (Do same as record.py for autopilot.py)
-        
-        # autopilot
-        if len(events) == 0:
-            print("here")
-            if output_dict["BTN_EAST"] == 1:
-                output_dict = autopilot.predict(output_dict)
-                driving.drive(output_dict)
-                autopilot_active = True
-            if (output_dict["BTN_EAST"] == 0) and autopilot_active:
-                output_dict["ABS_RX"] = 0
-                output_dict["ABS_Y"] = 0
-                autopilot_active = False
-            continue
+        events = inputs.get_gamepad()  # INFO: THIS BLOCKS UNTIL AN EVENT COMES !!!
 
         for event in events:
             # Check if shutdown is requested
@@ -68,7 +51,8 @@ try:
             # update output_dict
             if event.code in output_dict.keys():
                 output_dict[event.code] = event.state  # update
-                driving.drive(output_dict)  # drive
+                if output_dict["BTN_EAST"] == 0:
+                    driving.drive(output_dict)  # drive, otherwise self-driving is enabled
                 db.set(config.GAMEPAD, json.dumps(output_dict))  # update redis cache
 
 except KeyboardInterrupt:

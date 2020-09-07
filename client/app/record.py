@@ -13,10 +13,19 @@ from nanocamera import Camera
 class Record():
     def __init__(self, triggers, echos, cam_res=None):
         # resolution has to be a multiple of 32 (32*7 =224)
+
         if cam_res is None:
             cam_res = [224, 224]
         self.TRIGGERS = triggers
         self.ECHOS = echos
+
+        # Initialize pins
+        GPIO.setmode(GPIO.BCM)
+        for pin in self.TRIGGERS:
+            GPIO.setup(pin, GPIO.OUT)
+            GPIO.output(pin, GPIO.LOW)
+        for pin in self.ECHOS:
+            GPIO.setup(pin, GPIO.IN)
 
         self.camera = Camera(device_id=0, flip=0, width=cam_res[0], height=cam_res[1], fps=30)
 
@@ -72,14 +81,6 @@ if __name__ == "__main__":
 
     # Initialize redis
     db = redis.StrictRedis(host=config.REDIS_HOST, port=config.REDIS_PORT, db=config.DB_ID)
-
-    # Initialize pins
-    GPIO.setmode(GPIO.BCM)
-    for pin in config.TRIGGERS:
-        GPIO.setup(pin, GPIO.OUT)
-        GPIO.output(pin, GPIO.LOW)
-    for pin in config.ECHOS:
-        GPIO.setup(pin, GPIO.IN)
 
     # Instantiate Record class
     recording = Record(config.TRIGGERS, config.ECHOS)

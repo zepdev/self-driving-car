@@ -1,4 +1,10 @@
+import json
+import time
+import redis
+import config
+import logging
 import numpy as np
+from main import driving
 from nanocamera import Camera
 import tflite_runtime.interpreter as tflite
 
@@ -45,3 +51,36 @@ class Autopilot():
 
         return output_dict
 
+
+if __name__ == "__main__":
+
+    logging.info("Recording process is starting ... ")
+    logging.debug("Warning: Debugging is enabled.")
+
+    # Initialize redis
+    db = redis.StrictRedis(host=config.REDIS_HOST, port=config.REDIS_PORT, db=config.DB_ID)
+
+    # Instantiate autopilot
+    autopilot = Autopilot(model_path=config.model_path)
+
+    # Start
+    time.sleep(config.START_SLEEP_TIME)
+    logging.info("Recording process is ready!")
+
+    while True:
+
+        # Get current output_dict
+        pad = db.get(config.GAMEPAD)
+        if pad is None:
+            continue
+        else:
+            output_dict = json.loads(pad)
+
+        # Drive autonomously if requested
+        if output_dict["BTN_EAST"] == 1:
+            print("hello")
+            time.sleep(0.5)
+            #output_dict = autopilot.predict(output_dict)
+            #driving.drive(output_dict)
+
+        time.sleep(config.RECORD_SLEEP_TIME)

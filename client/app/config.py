@@ -22,6 +22,13 @@ TRIGGERS = [TRIGGER_1, TRIGGER_2, TRIGGER_3]
 ECHOS = [ECHO_1, ECHO_2, ECHO_3]
 SERVO_PIN = 12
 
+# Motor
+MAX_SPEED = 25  # Percentage of maximal possible speed
+PWM_PIN = 13
+EN_PIN = 23
+DIR_PIN = 25
+FLT_PIN = 6
+
 # Servo angles
 servo_angles = {
     "SERVO_MIN_ANGLE": 4.5,
