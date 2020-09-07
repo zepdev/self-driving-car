@@ -23,13 +23,13 @@ def stear(x):
 
 led = GPIO.PWM(12,50)
 led.start(7) #middle
-time.sleep(sleep_time_short)
+time.sleep(sleep_time_long)
 led.ChangeDutyCycle(9)
-time.sleep(sleep_time_short)
+time.sleep(sleep_time_long)
 led.ChangeDutyCycle(4.5)
-time.sleep(sleep_time_short)
+time.sleep(sleep_time_long)
 led.ChangeDutyCycle(7)
-time.sleep(sleep_time_short)
+time.sleep(sleep_time_long)
 
 led.stop()
 time.sleep(sleep_time_short)
