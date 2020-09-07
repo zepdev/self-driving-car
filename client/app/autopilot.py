@@ -4,7 +4,8 @@ import redis
 import config
 import logging
 import numpy as np
-from main import driving
+import RPi.GPIO as GPIO
+from drive import Motor, Drive
 from nanocamera import Camera
 import tflite_runtime.interpreter as tflite
 
@@ -54,7 +55,7 @@ class Autopilot():
 
 if __name__ == "__main__":
 
-    logging.info("Recording process is starting ... ")
+    logging.info("Autopilot process is starting ... ")
     logging.debug("Warning: Debugging is enabled.")
 
     # Initialize redis
@@ -63,9 +64,14 @@ if __name__ == "__main__":
     # Instantiate autopilot
     autopilot = Autopilot(model_path=config.model_path)
 
+    # Instantiate motor and driving class
+    GPIO.setmode(GPIO.BCM)  # BCM = GPIO PIN-numbering (NOT BOARD-Numbering)
+    motor = Motor(config.PWM_PIN, config.EN_PIN, config.DIR_PIN, config.FLT_PIN)
+    driving = Drive(config.SERVO_PIN, config.servo_angles, motor, config.MAX_SPEED)
+
     # Start
     time.sleep(config.START_SLEEP_TIME)
-    logging.info("Recording process is ready!")
+    logging.info("Autopilot process is ready!")
 
     while True:
 
