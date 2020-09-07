@@ -12,9 +12,9 @@ LOG_LEVEL = "INFO"
 logging.basicConfig(format="%(asctime)s %(message)s", level=LOG_LEVEL)
 
 # Pins
-TRIGGER_1 = 21 #front
-TRIGGER_2 = 22 #back-left
-TRIGGER_3 = 20 #back-right
+TRIGGER_1 = 21  # front
+TRIGGER_2 = 22  # back-left
+TRIGGER_3 = 20  # back-right
 ECHO_1 = 24
 ECHO_2 = 17
 ECHO_3 = 18
