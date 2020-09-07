@@ -58,7 +58,6 @@ try:
             continue
 
         for event in events:
-            print(f"{event.code}   {event.state}")
             # Check if shutdown is requested
             if event.code == "BTN_MODE":
                 driving.disable()

@@ -13,13 +13,13 @@ logging.basicConfig(format="%(asctime)s %(message)s", level=LOG_LEVEL)
 
 # Pins
 TRIGGER_1 = 21 #front
-#TRIGGER_2 = 22 
-#TRIGGER_3 = 22
+TRIGGER_2 = 22 #back-left
+TRIGGER_3 = 20 #back-right
 ECHO_1 = 24
-#ECHO_2 = 25
-#ECHO_3 = 25
-TRIGGERS = [TRIGGER_1]#, TRIGGER_2]#, TRIGGER_3]
-ECHOS = [ECHO_1]#, ECHO_2]#, ECHO_3]
+ECHO_2 = 17
+ECHO_3 = 18
+TRIGGERS = [TRIGGER_1, TRIGGER_2, TRIGGER_3]
+ECHOS = [ECHO_1, ECHO_2, ECHO_3]
 SERVO_PIN = 12
 
 # Servo angles
