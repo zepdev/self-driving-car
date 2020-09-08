@@ -106,10 +106,10 @@ if __name__ == "__main__":
 
             time.sleep(config.RECORD_SLEEP_TIME)
 
-            # stop script
-            if output_dict["BTN_NORTH"] == 1:
-                time.sleep(config.MAIN_SLEEP_TIME)
-                sys.exit()
+            # # stop script
+            # if output_dict["BTN_NORTH"] == 1:
+            #     time.sleep(config.MAIN_SLEEP_TIME)
+            #     sys.exit()
 
     except KeyboardInterrupt:
         time.sleep(config.MAIN_SLEEP_TIME)

@@ -52,12 +52,12 @@ try:
                     driving.drive(output_dict)  # drive, otherwise self-driving is enabled
                 db.set(config.GAMEPAD, json.dumps(output_dict))  # update redis cache
 
-            # stop script
-            if output_dict["BTN_NORTH"] == 1:
-                driving.disable()
-                time.sleep(config.MAIN_SLEEP_TIME)
-                GPIO.cleanup()
-                sys.exit()
+            # # stop script
+            # if output_dict["BTN_NORTH"] == 1:
+            #     driving.disable()
+            #     time.sleep(config.MAIN_SLEEP_TIME)
+            #     GPIO.cleanup()
+            #     sys.exit()
 
 except KeyboardInterrupt:
     driving.disable()
