@@ -4,6 +4,7 @@ import time
 import redis
 import config
 import logging
+from PIL import Image  # TODO: Remove this
 import numpy as np
 import RPi.GPIO as GPIO
 from drive import Motor, Drive
@@ -31,11 +32,11 @@ class Autopilot():
 
     def predict(self, output_dict):
 
-        #stream = BytesIO()
-        #self.camera.capture(stream, 'jpeg')
-        #image = Image.open(stream).convert('RGB').resize((self.width, self.height), Image.ANTIALIAS)
-        #image = np.array(image)
-        image = self.camera.read()
+        # TODO: change this back
+        # image = self.camera.read()
+        image = Image.open('models/test-pic.jpg')
+        image = np.asarray(image)
+
         image = image.astype(np.float32)
         image = np.expand_dims(image, axis=0)
 
@@ -87,10 +88,8 @@ if __name__ == "__main__":
 
             # Drive autonomously if requested
             if output_dict["BTN_EAST"] == 1:
-                print("hello")
-                time.sleep(0.5)
-                # output_dict = autopilot.predict(output_dict)
-                # driving.drive(output_dict)
+                output_dict = autopilot.predict(output_dict)
+                driving.drive(output_dict)
 
     except KeyboardInterrupt:
         time.sleep(config.MAIN_SLEEP_TIME)

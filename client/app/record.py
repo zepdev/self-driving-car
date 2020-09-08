@@ -60,10 +60,8 @@ class Record():
         current_time = self._convert_time(datetime.datetime.now())
         
         # picture
-        # TODO: change this back
-        # np_image = self.camera.read()
-        # img = Image.fromarray(np_image).convert('RGB')
-        img = Image.open("models/test-pic.jpg")
+        np_image = self.camera.read()
+        img = Image.fromarray(np_image).convert('RGB')
         stream = BytesIO()
         img.save(stream, format='jpeg')
         pic_binary = base64.b64encode(stream.getvalue())
