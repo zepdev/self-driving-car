@@ -28,6 +28,7 @@ if len(pads) == 0:
 
 # Cache for outputs from gamepad
 output_dict = {"BTN_TL": 0, "BTN_TR": 0, "ABS_RX": 0, "ABS_Y": 0, "BTN_EAST": 0, "BTN_NORTH": 1}
+self_driving = False
 
 # Start
 logging.info("Main process is ready!")
@@ -52,7 +53,14 @@ try:
                 db.set(config.GAMEPAD, json.dumps(output_dict))  # update redis cache
                 if output_dict["BTN_EAST"] == 0:
                     driving.drive(output_dict)  # drive, otherwise self-driving is enabled
+                else:  # currently self-driving
+                    self_driving = True
 
+            # Stop the car after self-driving
+            if (output_dict["BTN_EAST"] == 0) and self_driving:
+                self_driving = False
+                time.sleep(0.2)
+                driving.drive(output_dict)
 
 except KeyboardInterrupt:
     driving.disable()

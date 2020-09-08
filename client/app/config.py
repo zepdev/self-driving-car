@@ -8,7 +8,7 @@ QUEUE_NAME = "queue"
 GAMEPAD = "gamepad"
 
 # Logging
-LOG_LEVEL = "DEBUG"
+LOG_LEVEL = "INFO"
 logging.basicConfig(format="%(asctime)s %(message)s", level=LOG_LEVEL)
 
 # Pins

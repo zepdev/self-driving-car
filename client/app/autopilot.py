@@ -89,7 +89,6 @@ if __name__ == "__main__":
             # Drive autonomously if requested
             if output_dict["BTN_EAST"] == 1:
                 output_dict = autopilot.predict(output_dict)
-                logging.debug(f"{output_dict}")
                 driving.drive_autonomous(output_dict)
 
     except KeyboardInterrupt:
