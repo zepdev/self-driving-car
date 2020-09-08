@@ -55,6 +55,6 @@ while True:
             continue  # in this case, do not sleep
         else:
             # Something failed, do not remove data from queue
-            logging.error(f"Could not send {len(data)} objects to server. Trying again.")
+            logging.error(f"Could not send {len(data)} objects to server. Trying again. Status: {status}")
 
     time.sleep(config.SLEEP_TIME)
