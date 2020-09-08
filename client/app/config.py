@@ -37,7 +37,7 @@ servo_angles = {
 }
 
 # Others
-START_SLEEP_TIME = 5  # Sleep long on autostart to give docker-compose time to start
+START_SLEEP_TIME = 20  # Sleep long on autostart to give docker-compose time to start
 RECORD_SLEEP_TIME = 0.6
 MAIN_SLEEP_TIME = 1
 
