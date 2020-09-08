@@ -6,21 +6,30 @@ import base64
 import config
 import logging
 import datetime
+from PIL import Image
 from io import BytesIO
 import RPi.GPIO as GPIO
-from picamera import PiCamera
+from nanocamera import Camera
 
 
 class Record():
     def __init__(self, triggers, echos, cam_res=None):
         # resolution has to be a multiple of 32 (32*7 =224)
+
         if cam_res is None:
             cam_res = [224, 224]
         self.TRIGGERS = triggers
         self.ECHOS = echos
 
-        self.camera = PiCamera()
-        self.camera.resolution = tuple(cam_res)
+        # Initialize pins
+        GPIO.setmode(GPIO.BCM)
+        for pin in self.TRIGGERS:
+            GPIO.setup(pin, GPIO.OUT)
+            GPIO.output(pin, GPIO.LOW)
+        for pin in self.ECHOS:
+            GPIO.setup(pin, GPIO.IN)
+
+        self.camera = Camera(device_id=0, flip=0, width=cam_res[0], height=cam_res[1], fps=30)
 
         # Allow some time for the initialization
         time.sleep(2)
@@ -51,8 +60,10 @@ class Record():
         current_time = self._convert_time(datetime.datetime.now())
         
         # picture
+        np_image = self.camera.read()
+        img = Image.fromarray(np_image).convert('RGB')
         stream = BytesIO()
-        self.camera.capture(stream, 'jpeg')
+        img.save(stream, format='jpeg')
         pic_binary = base64.b64encode(stream.getvalue())
         pic_str = pic_binary.decode("utf-8")
         
@@ -72,24 +83,18 @@ if __name__ == "__main__":
 
     logging.info("Recording process is starting ... ")
     logging.debug("Warning: Debugging is enabled.")
+    time.sleep(config.START_SLEEP_TIME)
 
     # Initialize redis
     db = redis.StrictRedis(host=config.REDIS_HOST, port=config.REDIS_PORT, db=config.DB_ID)
-
-    # Initialize pins
-    GPIO.setmode(GPIO.BCM)
-    for pin in config.TRIGGERS:
-        GPIO.setup(pin, GPIO.OUT)
-        GPIO.output(pin, GPIO.LOW)
-    for pin in config.ECHOS:
-        GPIO.setup(pin, GPIO.IN)
 
     # Instantiate Record class
     recording = Record(config.TRIGGERS, config.ECHOS)
 
     # Start
-    time.sleep(config.START_SLEEP_TIME)
     logging.info("Recording process is ready!")
+    time.sleep(config.MAIN_SLEEP_TIME)
+    
     try:
         while True:
 
@@ -107,8 +112,8 @@ if __name__ == "__main__":
                 logging.debug("Sent recordings to redis queue.")
 
             time.sleep(config.RECORD_SLEEP_TIME)
-            
+
     except KeyboardInterrupt:
-        time.sleep(config.RECORD_SLEEP_TIME)
+        time.sleep(config.MAIN_SLEEP_TIME)
         GPIO.cleanup()
         sys.exit()

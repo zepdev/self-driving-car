@@ -1,7 +1,14 @@
-from PIL import Image
-from io import BytesIO
+import sys
+import json
+import time
+import redis
+import config
+import logging
+from PIL import Image  # TODO: Remove this
 import numpy as np
-from picamera import PiCamera
+import RPi.GPIO as GPIO
+from drive import Motor, Drive
+from nanocamera import Camera
 import tflite_runtime.interpreter as tflite
 
 
@@ -12,8 +19,7 @@ class Autopilot():
         # camera
         if cam_res is None:
             cam_res = [224, 224]
-        self.camera = PiCamera()
-        self.camera.resolution = tuple(cam_res)
+        self.camera = Camera(device_id=0, flip=0, width=cam_res[0], height=cam_res[1], fps=30)
 
         # load model
         self.interpreter = tflite.Interpreter(model_path=model_path)
@@ -26,10 +32,11 @@ class Autopilot():
 
     def predict(self, output_dict):
 
-        stream = BytesIO()
-        self.camera.capture(stream, 'jpeg')
-        image = Image.open(stream).convert('RGB').resize((self.width, self.height), Image.ANTIALIAS)
-        image = np.array(image)
+        # TODO: change this back
+        # image = self.camera.read()
+        image = Image.open('models/test-pic.jpg')
+        image = np.asarray(image)
+
         image = image.astype(np.float32)
         image = np.expand_dims(image, axis=0)
 
@@ -40,8 +47,51 @@ class Autopilot():
         if self.output_shape == 2:
             speed = (output_data[0][1] + 1) * 0.5
             output_dict["ABS_Y"] = speed
+        else:  # self.output_shape == 1
+            output_dict["ABS_Y"] = 0.5
         steering = output_data[0][0]
         output_dict["ABS_RX"] = steering
 
         return output_dict
 
+
+if __name__ == "__main__":
+
+    logging.info("Autopilot process is starting ... ")
+    logging.debug("Warning: Debugging is enabled.")
+    time.sleep(config.START_SLEEP_TIME)
+
+    # Initialize redis
+    db = redis.StrictRedis(host=config.REDIS_HOST, port=config.REDIS_PORT, db=config.DB_ID)
+
+    # Instantiate autopilot
+    autopilot = Autopilot(model_path=config.model_path)
+
+    # Instantiate motor and driving class
+    GPIO.setmode(GPIO.BCM)  # BCM = GPIO PIN-numbering (NOT BOARD-Numbering)
+    motor = Motor(config.PWM_PIN, config.EN_PIN, config.DIR_PIN, config.FLT_PIN)
+    driving = Drive(config.SERVO_PIN, config.servo_angles, motor, config.MAX_SPEED)
+
+    # Start
+    time.sleep(config.MAIN_SLEEP_TIME)
+    logging.info("Autopilot process is ready!")
+
+    try:
+        while True:
+
+            # Get current output_dict
+            pad = db.get(config.GAMEPAD)
+            if pad is None:
+                continue
+            else:
+                output_dict = json.loads(pad)
+
+            # Drive autonomously if requested
+            if output_dict["BTN_EAST"] == 1:
+                output_dict = autopilot.predict(output_dict)
+                driving.drive_autonomous(output_dict)
+
+    except KeyboardInterrupt:
+        time.sleep(config.MAIN_SLEEP_TIME)
+        GPIO.cleanup()
+        sys.exit(0)

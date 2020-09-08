@@ -6,23 +6,20 @@ import config
 import inputs
 import logging
 import RPi.GPIO as GPIO
-from drive import Drive
-from autopilot import Autopilot
+from drive import Motor, Drive
 from subprocess import call
 
 logging.info("Main process is starting ... ")
 logging.debug("Warning: Debugging is enabled.")
+time.sleep(config.START_SLEEP_TIME)
 
 # Setup redis
 db = redis.StrictRedis(host=config.REDIS_HOST, port=config.REDIS_PORT, db=config.DB_ID)
 
-# Instantiate driving class
-GPIO.setmode(GPIO.BCM)
-GPIO.setup(config.SERVO_PIN, GPIO.OUT)
-driving = Drive(config.SERVO_PIN, config.servo_angles)
-
-# Instantiate autopilot
-autopilot = Autopilot(model_path=config.model_path)
+# Instantiate motor and driving class
+GPIO.setmode(GPIO.BCM)  # BCM = GPIO PIN-numbering (NOT BOARD-Numbering)
+motor = Motor(config.PWM_PIN, config.EN_PIN, config.DIR_PIN, config.FLT_PIN)
+driving = Drive(config.SERVO_PIN, config.servo_angles, motor, config.MAX_SPEED)
 
 # Check connection with gamepad
 pads = inputs.devices.gamepads
@@ -30,32 +27,40 @@ if len(pads) == 0:
     raise Exception("Could not find gamepads!")
 
 # Cache for outputs from gamepad
-output_dict = {"BTN_TL": 0, "BTN_TR": 0, "ABS_RX": 0, "ABS_Y": 0, "BTN_EAST": 0}
+output_dict = {"BTN_TL": 0, "BTN_TR": 0, "ABS_RX": 0, "ABS_Y": 0, "BTN_EAST": 0, "BTN_NORTH": 1}
+self_driving = False
 
 # Start
-time.sleep(config.START_SLEEP_TIME)
 logging.info("Main process is ready!")
+time.sleep(config.MAIN_SLEEP_TIME)
+
 try:
     while True:
 
-        # Read inputs from gamepad
-        events = inputs.get_gamepad()
+        # Read all inputs from gamepad
+        events = inputs.get_gamepad()  # INFO: THIS BLOCKS UNTIL AN EVENT COMES !!!
 
         for event in events:
-
             # Check if shutdown is requested
             if event.code == "BTN_MODE":
+                driving.disable()
+                time.sleep(config.MAIN_SLEEP_TIME)
+                GPIO.cleanup()
                 call("sudo poweroff", shell=True)
 
             if event.code in output_dict.keys():
+                output_dict[event.code] = event.state  # update
+                db.set(config.GAMEPAD, json.dumps(output_dict))  # update redis cache
+                if output_dict["BTN_EAST"] == 0:
+                    driving.drive(output_dict)  # drive, otherwise self-driving is enabled
+                else:  # currently self-driving
+                    self_driving = True
 
-                # update Cache
-                output_dict[event.code] = event.state
-
-                if output_dict["BTN_EAST"] == 1:  # RED Button
-                    output_dict = autopilot.predict(output_dict)
+            # Stop the car after self-driving
+            if (output_dict["BTN_EAST"] == 0) and self_driving:
+                self_driving = False
+                time.sleep(0.2)
                 driving.drive(output_dict)
-                db.set(config.GAMEPAD, json.dumps(output_dict))  # update_cache
 
 except KeyboardInterrupt:
     driving.disable()
