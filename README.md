@@ -5,7 +5,11 @@
 
 ```
 $ docker-compose build
-$ docker-compose up
+$ docker-compose up -d
+```
+Read the logs with
+```
+$ docker-compose logs --tail=20
 ```
 
 Info: The RPi should have internet connection through WiFi.
@@ -16,5 +20,5 @@ Simple http message collector. Gets data from RCcar and stores it in Amazon S3. 
 
 ```
 $ docker-compose build
-$ docker-compose up
+$ docker-compose up -d
 ```
