@@ -23,7 +23,7 @@ ECHOS = [ECHO_1, ECHO_2, ECHO_3]
 SERVO_PIN = 12
 
 # Motor (Should not change the PIN numbers, this is specific for the motor driver head.)
-MAX_SPEED = 25  # Percentage of maximal possible speed
+MAX_SPEED = 31.25  # Percentage of maximal possible speed (before: 150/480=0.3125)
 PWM_PIN = 13
 EN_PIN = 23
 DIR_PIN = 25
