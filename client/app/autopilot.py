@@ -87,10 +87,11 @@ if __name__ == "__main__":
                 output_dict = json.loads(pad)
 
             # Drive autonomously if requested
+            # TODO: change this back
             if output_dict["BTN_EAST"] == 1:
-                output_dict = autopilot.predict(output_dict)
-                logging.debug(f"{output_dict}")
-                driving.drive(output_dict)
+                # output_dict = autopilot.predict(output_dict)
+                # logging.debug(f"{output_dict}")
+                driving.drive({'BTN_TL': 0, 'BTN_TR': 0, 'ABS_RX': -0.5, 'ABS_Y': 0.5, 'BTN_EAST': 1, 'BTN_NORTH': 0})
 
     except KeyboardInterrupt:
         time.sleep(config.MAIN_SLEEP_TIME)
