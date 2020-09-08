@@ -6,8 +6,8 @@ import base64
 import config
 import logging
 import datetime
-import numpy as np
 from PIL import Image
+from io import BytesIO
 import RPi.GPIO as GPIO
 from nanocamera import Camera
 
@@ -61,11 +61,12 @@ class Record():
         
         # picture
         # TODO: change this back
-        # image = self.camera.read()
-        image = Image.open("models/test-pic.jpg")
-        image = np. asarray(image)
-
-        pic_binary = base64.b64encode(image)  # stays the same
+        # np_image = self.camera.read()
+        # img = Image.fromarray(np_image).convert('RGB')
+        img = Image.open("models/test-pic.jpg")
+        stream = BytesIO()
+        img.save(stream, format='jpeg')
+        pic_binary = base64.b64encode(stream.getvalue())
         pic_str = pic_binary.decode("utf-8")
         
         # gamepad
