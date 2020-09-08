@@ -11,6 +11,7 @@ from subprocess import call
 
 logging.info("Main process is starting ... ")
 logging.debug("Warning: Debugging is enabled.")
+time.sleep(config.START_SLEEP_TIME)
 
 # Setup redis
 db = redis.StrictRedis(host=config.REDIS_HOST, port=config.REDIS_PORT, db=config.DB_ID)
@@ -29,8 +30,8 @@ if len(pads) == 0:
 output_dict = {"BTN_TL": 0, "BTN_TR": 0, "ABS_RX": 0, "ABS_Y": 0, "BTN_EAST": 0, "BTN_NORTH": 1}
 
 # Start
-time.sleep(config.START_SLEEP_TIME)
 logging.info("Main process is ready!")
+time.sleep(config.MAIN_SLEEP_TIME)
 
 try:
     while True:

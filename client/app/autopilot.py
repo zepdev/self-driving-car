@@ -58,6 +58,7 @@ if __name__ == "__main__":
 
     logging.info("Autopilot process is starting ... ")
     logging.debug("Warning: Debugging is enabled.")
+    time.sleep(config.START_SLEEP_TIME)
 
     # Initialize redis
     db = redis.StrictRedis(host=config.REDIS_HOST, port=config.REDIS_PORT, db=config.DB_ID)
@@ -71,7 +72,7 @@ if __name__ == "__main__":
     driving = Drive(config.SERVO_PIN, config.servo_angles, motor, config.MAX_SPEED)
 
     # Start
-    time.sleep(config.START_SLEEP_TIME)
+    time.sleep(config.MAIN_SLEEP_TIME)
     logging.info("Autopilot process is ready!")
 
     try:

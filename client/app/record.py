@@ -78,6 +78,7 @@ if __name__ == "__main__":
 
     logging.info("Recording process is starting ... ")
     logging.debug("Warning: Debugging is enabled.")
+    time.sleep(config.START_SLEEP_TIME)
 
     # Initialize redis
     db = redis.StrictRedis(host=config.REDIS_HOST, port=config.REDIS_PORT, db=config.DB_ID)
@@ -86,8 +87,9 @@ if __name__ == "__main__":
     recording = Record(config.TRIGGERS, config.ECHOS)
 
     # Start
-    time.sleep(config.START_SLEEP_TIME)
     logging.info("Recording process is ready!")
+    time.sleep(config.MAIN_SLEEP_TIME)
+    
     try:
         while True:
 
