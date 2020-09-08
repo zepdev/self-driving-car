@@ -49,9 +49,10 @@ try:
 
             if event.code in output_dict.keys():
                 output_dict[event.code] = event.state  # update
+                db.set(config.GAMEPAD, json.dumps(output_dict))  # update redis cache
                 if output_dict["BTN_EAST"] == 0:
                     driving.drive(output_dict)  # drive, otherwise self-driving is enabled
-                db.set(config.GAMEPAD, json.dumps(output_dict))  # update redis cache
+
 
 except KeyboardInterrupt:
     driving.disable()

@@ -74,3 +74,8 @@ class Drive():
         self.motor.setSpeed((-round((output_dict["ABS_Y"]+0.5)/32767.5, 1))*self.MAX_SPEED)
         servo_angle = self._steer(-round((output_dict["ABS_RX"]+0.5)/32767.5, 1)) 
         self.servo.ChangeDutyCycle(servo_angle)
+
+    def drive_autonomous(self, output_dict):
+        self.motor.setSpeed(output_dict["ABS_Y"]*self.MAX_SPEED)
+        servo_angle = self._steer(-output_dict["ABS_RX"])
+        self.servo.ChangeDutyCycle(servo_angle)
