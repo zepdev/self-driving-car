@@ -92,11 +92,6 @@ if __name__ == "__main__":
                 # output_dict = autopilot.predict(output_dict)
                 # driving.drive(output_dict)
 
-            # # stop script
-            # if output_dict["BTN_NORTH"] == 1:
-            #     time.sleep(config.MAIN_SLEEP_TIME)
-            #     sys.exit(0)
-
     except KeyboardInterrupt:
         time.sleep(config.MAIN_SLEEP_TIME)
         GPIO.cleanup()

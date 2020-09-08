@@ -22,7 +22,7 @@ TRIGGERS = [TRIGGER_1, TRIGGER_2, TRIGGER_3]
 ECHOS = [ECHO_1, ECHO_2, ECHO_3]
 SERVO_PIN = 12
 
-# Motor
+# Motor (Should not change the PIN numbers, this is specific for the motor driver head.)
 MAX_SPEED = 25  # Percentage of maximal possible speed
 PWM_PIN = 13
 EN_PIN = 23
@@ -37,7 +37,7 @@ servo_angles = {
 }
 
 # Others
-START_SLEEP_TIME = 30  # Sleep long on autostart to give docker-compose time to start
+START_SLEEP_TIME = 30  # Sleep long on auto-start to give docker-compose time to start
 RECORD_SLEEP_TIME = 0.6
 MAIN_SLEEP_TIME = 1
 

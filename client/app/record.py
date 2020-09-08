@@ -6,6 +6,8 @@ import base64
 import config
 import logging
 import datetime
+import numpy as np
+from PIL import Image
 import RPi.GPIO as GPIO
 from nanocamera import Camera
 
@@ -58,8 +60,12 @@ class Record():
         current_time = self._convert_time(datetime.datetime.now())
         
         # picture
-        image = self.camera.read()
-        pic_binary = base64.b64encode(image)
+        # TODO: change this back
+        # image = self.camera.read()
+        image = Image.open("models/test-pic.jpg")
+        image = np. asarray(image)
+
+        pic_binary = base64.b64encode(image)  # stays the same
         pic_str = pic_binary.decode("utf-8")
         
         # gamepad
@@ -107,11 +113,6 @@ if __name__ == "__main__":
                 logging.debug("Sent recordings to redis queue.")
 
             time.sleep(config.RECORD_SLEEP_TIME)
-
-            # # stop script
-            # if output_dict["BTN_NORTH"] == 1:
-            #     time.sleep(config.MAIN_SLEEP_TIME)
-            #     sys.exit()
 
     except KeyboardInterrupt:
         time.sleep(config.MAIN_SLEEP_TIME)
