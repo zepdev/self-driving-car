@@ -15,6 +15,8 @@ for i in range(3):
     # read single picture
     ret, frame = cam.read()
     cv2.imwrite(f"test_{i}.jpg", frame)
+    if not ret:
+        print("Error")
     #img = Image.fromarray(frame).convert('RGB')
     #img.save(f'test{i}.jpg')
     #time.sleep(2)
