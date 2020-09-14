@@ -36,7 +36,7 @@ from io import BytesIO
 #
 # np_image = camera.read()
 # # decode
-img = Image.fromarray(frame).convert('RGB')
+img = Image.fromarray(frame).convert('RGB') 
 stream = BytesIO()
 img.save('test.jpg')
 img.save(stream, format='jpeg')
