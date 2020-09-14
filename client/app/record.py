@@ -13,7 +13,7 @@ from nanocamera import Camera
 
 
 class Record():
-    def __init__(self, triggers, echos, cam_res=(224,224)):
+    def __init__(self, triggers, echos, cam_res=None):
         # resolution has to be a multiple of 32 (32*7 =224)
 
         if cam_res is None:
