@@ -37,6 +37,7 @@ class Autopilot():
 
         image = image.astype(np.float32)
         image = np.expand_dims(image, axis=0)
+        logging.info(f"{image.shape}")
 
         self.interpreter.set_tensor(self.input_details[0]['index'], image)
         self.interpreter.invoke()
