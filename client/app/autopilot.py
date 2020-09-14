@@ -31,14 +31,15 @@ class Autopilot():
         self.output_shape = self.output_details[0]['shape'][1]
 
     def predict(self, output_dict):
-
-        # TODO: change this back
-        # image = self.camera.read()
-        image = Image.open('models/test-pic.jpg')
+        logging.info(f"{self.camera.isReady()}")
+        image = self.camera.read()
+        logging.info(f"{image}")
+        logging.info(f"{image.shape}")
         image = np.asarray(image)
 
         image = image.astype(np.float32)
         image = np.expand_dims(image, axis=0)
+        logging.info(f"{image.shape}")
 
         self.interpreter.set_tensor(self.input_details[0]['index'], image)
         self.interpreter.invoke()

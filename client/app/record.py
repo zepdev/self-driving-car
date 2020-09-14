@@ -29,7 +29,7 @@ class Record():
         for pin in self.ECHOS:
             GPIO.setup(pin, GPIO.IN)
 
-        self.camera = Camera(device_id=0, flip=0, width=cam_res[0], height=cam_res[1], fps=30)
+        self.camera = Camera(device_id=0, flip=2, width=cam_res[0], height=cam_res[1], fps=30, enforce_fps=True)
 
         # Allow some time for the initialization
         time.sleep(2)
