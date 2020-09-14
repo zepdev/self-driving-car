@@ -1,24 +1,20 @@
 import cv2
-print(cv2.__version)
-dispW=1280
-disoH=960
+print(cv2.__version__)
+dispW=640
+dispH=480
 flip=2
 camSet = 'nvarguscamerasrc !  video/x-raw(memory:NVMM), width=3264, height=2464, format=NV12, framerate=21/1 ! nvvidconv flip-method='+str(flip)+' ! video/x-raw, width='+str(dispW)+', height='+str(dispH)+', format=BGRx ! videoconvert ! video/x-raw, format=BGR ! appsink'
 cam = cv2.VideoCapture(camSet)
-while True:
-    ret, frame = cam.read()
-    cv2.imshow('piCam', frame)
-    if cv2.waitkey(1)==ord('q'):
-        break
+ret, frame = cam.read()
 
 cam.release()
 cv2.destroyAllWindows()
 
 
 # import cv2
-# import base64
-# from PIL import Image
-# from io import BytesIO
+import base64
+from PIL import Image
+from io import BytesIO
 # from nanocamera import Camera
 # import time
 #
@@ -40,16 +36,16 @@ cv2.destroyAllWindows()
 #
 # np_image = camera.read()
 # # decode
-# img = Image.fromarray(np_image).convert('RGB')
-# stream = BytesIO()
-# img.save(stream, format='jpeg')
-# pic_binary = base64.b64encode(stream.getvalue())
-# pic_str = pic_binary.decode("utf-8")
+img = Image.fromarray(frame).convert('RGB')
+stream = BytesIO()
+img.save('test.jpg')
+img.save(stream, format='jpeg')
+pic_binary = base64.b64encode(stream.getvalue())
+pic_str = pic_binary.decode("utf-8")
 #
-# # encode
-# pic_binary_2 = pic_str.encode("utf-8")
-# img = base64.b64decode(pic_binary_2)
-#
+# encode
+pic_binary_2 = pic_str.encode("utf-8")
+img = base64.b64decode(pic_binary_2)
 # # close the camera instance
 # camera.release()
 #
