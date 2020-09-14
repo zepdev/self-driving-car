@@ -14,9 +14,10 @@ cam = cv2.VideoCapture(camSet)
 for i in range(3):
     # read single picture
     ret, frame = cam.read()
-    img = Image.fromarray(frame).convert('RGB')
-    img.save(f'test{i}.jpg')
-    time.sleep(2)
+    cv2.imwrite(f"test_{i}.jpg", frame)
+    #img = Image.fromarray(frame).convert('RGB')
+    #img.save(f'test{i}.jpg')
+    #time.sleep(2)
 
 
 # decode
