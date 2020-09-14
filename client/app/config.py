@@ -18,8 +18,8 @@ TRIGGER_3 = 20  # back-right
 ECHO_1 = 24
 ECHO_2 = 17
 ECHO_3 = 18
-TRIGGERS = [TRIGGER_1, TRIGGER_2, TRIGGER_3]
-ECHOS = [ECHO_1, ECHO_2, ECHO_3]
+TRIGGERS = []  # TRIGGER_1, TRIGGER_2, TRIGGER_3
+ECHOS = []  # ECHO_1, ECHO_2, ECHO_3
 SERVO_PIN = 12
 
 # Motor (Should not change the PIN numbers, this is specific for the motor driver head.)
