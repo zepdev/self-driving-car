@@ -10,8 +10,8 @@ sudo busybox devmem 0x6000d504 32 0x2
 sudo busybox devmem 0x70003248 32 0x46
 sudo busybox devmem 0x6000d100 32 0x00
 sleep 1
-python3 record.py &
-sleep 1
+# python3 record.py &
+# sleep 1
 python3 main.py &
 sleep 1
 python3 autopilot.py &
