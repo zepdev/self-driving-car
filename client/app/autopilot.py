@@ -31,7 +31,7 @@ class Autopilot():
         self.output_shape = self.output_details[0]['shape'][1]
 
     def predict(self, output_dict):
-
+        logging.info(f"{self.camera.isReady()}")
         image = self.camera.read()
         image = np.asarray(image)
 
