@@ -32,9 +32,7 @@ class Autopilot():
 
     def predict(self, output_dict):
 
-        # TODO: change this back
-        # image = self.camera.read()
-        image = Image.open('models/test-pic.jpg')
+        image = self.camera.read()
         image = np.asarray(image)
 
         image = image.astype(np.float32)
