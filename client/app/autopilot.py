@@ -4,7 +4,6 @@ import time
 import redis
 import config
 import logging
-from PIL import Image  # TODO: Remove this
 import numpy as np
 import RPi.GPIO as GPIO
 from drive import Motor, Drive
