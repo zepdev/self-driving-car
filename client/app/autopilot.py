@@ -31,19 +31,18 @@ class Autopilot():
         self.output_shape = self.output_details[0]['shape'][1]
 
     def predict(self, output_dict):
-        logging.info(f"{self.camera.isReady()}")
-        image = self.camera.read()
-        logging.info(f"{image}")
-        logging.info(f"{image.shape}")
-        image = np.asarray(image)
 
+        # Capture a picture and transform it to desired format
+        image = self.camera.read()
+        image = np.asarray(image)
         image = image.astype(np.float32)
         image = np.expand_dims(image, axis=0)
-        logging.info(f"{image.shape}")
 
+        # Get predictions
         self.interpreter.set_tensor(self.input_details[0]['index'], image)
         self.interpreter.invoke()
 
+        # Set speed and steering
         output_data = self.interpreter.get_tensor(self.output_details[0]['index'])
         if self.output_shape == 2:
             speed = (output_data[0][1] + 1) * 0.5
