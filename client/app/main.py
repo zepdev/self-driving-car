@@ -60,6 +60,8 @@ try:
             if (output_dict["BTN_EAST"] == 0) and self_driving:
                 self_driving = False
                 time.sleep(0.2)
+                output_dict["ABS_Y"] = 0.0
+                output_dict["ABS_RX"] = 0.0
                 driving.drive(output_dict)
 
 except KeyboardInterrupt:

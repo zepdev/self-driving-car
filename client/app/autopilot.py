@@ -43,11 +43,11 @@ class Autopilot():
 
         # Set speed and steering
         output_data = self.interpreter.get_tensor(self.output_details[0]['index'])
-        if self.output_shape == 2:
-            speed = (output_data[0][1] + 1) * 0.5
-            output_dict["ABS_Y"] = speed
-        else:  # self.output_shape == 1
-            output_dict["ABS_Y"] = 0.5
+        #if self.output_shape == 2:
+        #    speed = (output_data[0][1] + 1) * 0.5
+        #    output_dict["ABS_Y"] = speed
+        #else:  # self.output_shape == 1
+        output_dict["ABS_Y"] = 0.5
         steering = output_data[0][0]
         output_dict["ABS_RX"] = steering
 
