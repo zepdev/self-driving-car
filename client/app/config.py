@@ -23,7 +23,7 @@ ECHOS = []  # ECHO_1, ECHO_2, ECHO_3
 SERVO_PIN = 12
 
 # Motor (Should not change the PIN numbers, this is specific for the motor driver head.)
-MAX_SPEED = 31.25  # Percentage of maximal possible speed (before: 150/480=0.3125)
+MAX_SPEED = 40  # Percentage of maximal possible speed (before: 150/480=0.3125)
 PWM_PIN = 13
 EN_PIN = 23
 DIR_PIN = 25
@@ -42,5 +42,5 @@ RECORD_SLEEP_TIME = 0.6
 MAIN_SLEEP_TIME = 1
 
 # model
-model_path = "models/model-salvador.tflite"
+model_path = "models/nils_model_converted.tflite"
 
