@@ -16,7 +16,7 @@ Info: The RPi should have internet connection through WiFi.
 
 
 ## server
-Simple http message collector. Gets data from RCcar and stores it in Amazon S3. Run it with docker-compose:
+Simple http message collector. Gets data from RCcar and stores it in Amazon S3. Run on an EC2 instance with docker-compose:
 
 ```
 $ docker-compose build
